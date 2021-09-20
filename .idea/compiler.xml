@@ -9,8 +9,5 @@
         <module name="Rummikub" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Rummikub" target="16" />
-    </bytecodeTargetLevel>
   </component>
 </project>
