@@ -24,4 +24,11 @@ public class Deck {
         return deck.size();
     }
 
+    // Generate hand list with or without predefined tiles, predefined tiles are used for testing
+    public ArrayList<String> createHand(String predefined) {
+        ArrayList<String> hand = new ArrayList<>();
+
+        return hand;
+    }
+
 }
