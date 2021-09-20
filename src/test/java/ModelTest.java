@@ -36,5 +36,7 @@ public class ModelTest {
         }
 
         assertEquals(14, hand3.size());
+
+        assertEquals(62, deck.size());
     }
 }
