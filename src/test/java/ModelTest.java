@@ -1,4 +1,5 @@
 import model.Deck;
+import model.Tile;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -51,5 +52,27 @@ public class ModelTest {
         assertEquals(61, deck.size());
         deck.draw();
         assertEquals(60, deck.size());
+    }
+
+    @DisplayName("test tile object, attributes and display in text")
+    @Test
+    public void testTile() {
+        Tile tile1 = new Tile("O3");
+        assertEquals("Orange", tile1.color());
+        assertEquals(3, tile1.number());
+        assertEquals("O3", tile1.toString());
+
+        Tile tile2 = new Tile("R12");
+        tile2.newHighlight();
+        assertEquals("Red", tile1.color());
+        assertEquals(12, tile1.number());
+        assertEquals("*R12", tile1.toString());
+
+
+        Tile tile3 = new Tile("B7");
+        tile3.moveHighlight();
+        assertEquals("Blue", tile1.color());
+        assertEquals(7, tile1.number());
+        assertEquals("!R12", tile1.toString());
     }
 }
