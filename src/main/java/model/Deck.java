@@ -57,7 +57,9 @@ public class Deck {
 
     // Draw a tile from the deck
     public String draw() {
-        return "";
+        String tile = deck.get(0);
+        deck.remove(0);
+        return tile;
     }
 
 }
