@@ -39,4 +39,17 @@ public class ModelTest {
 
         assertEquals(62, deck.size());
     }
+
+    @DisplayName("test drawing a tile at a time from the deck")
+    @Test
+    public void testDrawTile() {
+        Deck deck = new Deck();
+        deck.createHand("");
+        deck.createHand("");
+        deck.createHand("");
+        deck.draw();
+        assertEquals(61, deck.size());
+        deck.draw();
+        assertEquals(60, deck.size());
+    }
 }

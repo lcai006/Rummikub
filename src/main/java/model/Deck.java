@@ -55,4 +55,9 @@ public class Deck {
         return hand;
     }
 
+    // Draw a tile from the deck
+    public String draw() {
+        return "";
+    }
+
 }
