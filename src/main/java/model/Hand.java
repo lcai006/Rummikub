@@ -113,4 +113,12 @@ public class Hand {
 
         return r.toString() + g + b + o;
     }
+
+    public void add(String tile) {
+
+    }
+
+    public void play(String list) {
+
+    }
 }

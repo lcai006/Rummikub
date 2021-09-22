@@ -92,4 +92,23 @@ public class ModelTest {
         assertEquals("R11 B1 B2 B7 O10", hand.toString());
         assertEquals("R11\nB1 B2 B7\nO10\n", hand.display());
     }
+
+    @DisplayName("test add and remove tiles in hand")
+    @Test
+    public void testHandModification() {
+        String tiles = "B2 B3 B4 O10 R11";
+        Hand hand = new Hand(tiles);
+
+        hand.play("O10");
+        assertEquals(4, hand.size());
+        assertEquals("R11 B2 B3 B4", hand.toString());
+
+        hand.add("R5");
+        assertEquals(5, hand.size());
+        assertEquals("R5 R11 B2 B3 B4", hand.toString());
+
+        hand.play("B2 B3 B4");
+        assertEquals(2, hand.size());
+        assertEquals("R5 R11", hand.toString());
+    }
 }
