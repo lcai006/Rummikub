@@ -107,8 +107,12 @@ public class ModelTest {
         assertEquals(5, hand.size());
         assertEquals("R5 R11 B2 B3 B4", hand.toString());
 
+        hand.add("B3");
+        assertEquals(6, hand.size());
+        assertEquals("R5 R11 B2 B3 B3 B4", hand.toString());
+
         hand.play("B2 B3 B4");
-        assertEquals(2, hand.size());
-        assertEquals("R5 R11", hand.toString());
+        assertEquals(3, hand.size());
+        assertEquals("R5 R11 B3", hand.toString());
     }
 }
