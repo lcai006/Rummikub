@@ -1,4 +1,5 @@
 import model.Deck;
+import model.Hand;
 import model.Tile;
 import org.junit.jupiter.api.*;
 
@@ -74,5 +75,21 @@ public class ModelTest {
         assertEquals("B", tile3.color());
         assertEquals(7, tile3.number());
         assertEquals("!B7", tile3.toString());
+    }
+
+    @DisplayName("test hand object, display in order")
+    @Test
+    public void testHandCreation() {
+        String tiles = "O5 G4 R1";
+        Hand hand = new Hand(tiles);
+        assertEquals(3, hand.size());
+        assertEquals("R1 G4 O5", hand.toString());
+        assertEquals("R1\nG4\nO5\n", hand.display());
+
+        tiles = "B2 B1 O10 R11 B7";
+        hand = new Hand(tiles);
+        assertEquals(5, hand.size());
+        assertEquals("R11 B1 B2 B7 O10", hand.toString());
+        assertEquals("R11\nB1 B2 B7\nO10\n", hand.display());
     }
 }
