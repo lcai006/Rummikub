@@ -49,4 +49,10 @@ public class Tile {
 
         return text;
     }
+
+    public boolean equals(Object obj) {
+        if (getClass() != obj.getClass())
+            return false;
+        return (this.toString().equals(obj.toString()));
+    }
 }

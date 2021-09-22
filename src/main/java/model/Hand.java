@@ -114,11 +114,28 @@ public class Hand {
         return r.toString() + g + b + o;
     }
 
+    // Adds a tile to the hand
     public void add(String tile) {
-
+        Tile t = new Tile(tile);
+        switch (t.color()) {
+            case "R" -> red.add(t);
+            case "G" -> green.add(t);
+            case "B" -> blue.add(t);
+            case "O" -> orange.add(t);
+        }
+        sort();
     }
 
     public void play(String list) {
-
+        String[] tiles = list.split("\\s+");
+        for (String tile: tiles) {
+            Tile t = new Tile(tile);
+            switch (t.color()) {
+                case "R" -> red.remove(t);
+                case "G" -> green.remove(t);
+                case "B" -> blue.remove(t);
+                case "O" -> orange.remove(t);
+            }
+        }
     }
 }
