@@ -1,6 +1,4 @@
-import model.Deck;
-import model.Hand;
-import model.Tile;
+import model.*;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -114,5 +112,27 @@ public class ModelTest {
         hand.play("B2 B3 B4");
         assertEquals(3, hand.size());
         assertEquals("R5 R11 B3", hand.toString());
+    }
+
+    @DisplayName("test meld creation, modification and display in text")
+    @Test
+    public void testMeld() {
+        String tiles = "B2 B4 B3";
+        Meld m1 = new Meld(tiles);
+        assertEquals(3, m1.size());
+        assertEquals("run", m1.type());
+        assertEquals("{B2 B3 B4}", m1.toString());
+
+        m1.add("B5");
+        assertEquals(4, m1.size());
+        assertEquals("{B2 B3 B4 B5}", m1.toString());
+
+        tiles = "G12 R12 O12 B12";
+        Meld m2 = new Meld(tiles);
+        assertEquals(4, m2.size());
+        assertEquals("set", m2.type());
+        assertEquals("{R12 G12 B12 O12}", m2.toString());
+        m2.remove("R12");
+        assertEquals("{G12 B12 O12}", m2.toString());
     }
 }
