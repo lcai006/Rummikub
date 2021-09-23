@@ -134,5 +134,11 @@ public class ModelTest {
         assertEquals("{R12 G12 B12 O12}", m2.toString());
         m2.remove("R12");
         assertEquals("{G12 B12 O12}", m2.toString());
+
+        tiles = "R12 R1 R13";
+        Meld m3 = new Meld(tiles);
+        assertEquals(3, m3.size());
+        assertEquals("run", m3.type());
+        assertEquals("{R12 R13 R1}", m3.toString());
     }
 }
