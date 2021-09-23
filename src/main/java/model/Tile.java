@@ -3,12 +3,20 @@ package model;
 public class Tile {
     private final String str;
     private final String color;
+    private int color_num;
     private final int number;
     private boolean newHighlighted = false;
     private boolean moveHighlighted = false;
 
     public Tile(String val) {
         color = val.substring(0, 1);
+        // use color number to organize tiles in "RGBO" order.
+        switch (color) {
+            case "R" -> color_num = 0;
+            case "G" -> color_num = 1;
+            case "B" -> color_num = 2;
+            case "O" -> color_num = 3;
+        }
         if (val.length() == 2)
             number = Integer.parseInt(val.substring(1, 2));
         else
@@ -23,6 +31,10 @@ public class Tile {
 
     public int number() {
         return this.number;
+    }
+
+    public int colorNum() {
+        return this.color_num;
     }
 
     public void newHighlight() {
