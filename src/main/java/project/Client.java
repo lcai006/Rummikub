@@ -12,7 +12,7 @@ public class Client {
     private ObjectInputStream dIn;
     private ObjectOutputStream dOut;
 
-    private Client(String host, int serverPort) {
+    public Client(String host, int serverPort) {
         this.serverHost = host;
         this.serverPort = serverPort;
     }
