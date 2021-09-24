@@ -1,11 +1,14 @@
 package project;
 
-import junit.framework.TestCase;
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class GameTest extends TestCase {
-    public GameTest() {
+import java.util.ArrayList;
 
-    }
+public class GameTest {
+    static Server server;
+    static ArrayList<Client> clients;
+
+
 
 }

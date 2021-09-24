@@ -1,9 +1,9 @@
 package project;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.*;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses( { ModelTest.class, GameTest.class } )
+@Suite
+@SuiteDisplayName("Rummikub Test Suite")
+@SelectClasses({ModelTest.class, GameTest.class})
 public class TestSuite {
 }

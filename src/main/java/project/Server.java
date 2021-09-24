@@ -141,6 +141,12 @@ public class Server {
         }
     }
 
+    /**
+     * Reset game
+     *
+     */
+    public void reset() {
 
+    }
 
 }
