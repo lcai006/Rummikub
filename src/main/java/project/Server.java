@@ -28,7 +28,7 @@ public class Server {
      * Starting the server and listen to the server port
      *
      */
-    private void startServer(){
+    public void startServer(){
         System.out.println("Waiting for players...");
         clients = new ArrayList<>();
         try {
