@@ -1,19 +1,21 @@
 package project;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
 public class Server {
-    private int serverPort;
+    private final int serverPort;
     private ArrayList<Socket> clients;
     private ServerSocket serverSocket;
+    private ArrayList<ObjectInputStream> dIn;
+    private ArrayList<ObjectOutputStream> dOut;
 
     public Server() {
         this.serverPort = Config.SERVER_PORT_NUMBER;
+        dIn = new ArrayList<>();
+        dOut = new ArrayList<>();
     }
 
     public static void main(String[] args) {
@@ -39,7 +41,12 @@ public class Server {
         acceptClients();
         sendStartInfo();
 
+        // Game logic
+        Game game = new Game();
+
         sendFinalMessage();
+        while (true) {
+        }
     }
 
     /**
@@ -52,6 +59,10 @@ public class Server {
                 // Accept client, add to the list
                 Socket socket = serverSocket.accept();
                 clients.add(socket);
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                dOut.add(out);
+                dIn.add(in);
             } catch (IOException e) {
                 System.out.println("Accept failed on: " + serverPort);
             }
@@ -60,19 +71,23 @@ public class Server {
     }
 
     /**
-     * Send string message to clients to end the program
+     * Update table and hand for players
      *
      */
-    public void sendString(String str) {
+    public void update(Game game) {
+        String msg = "";
+
+        // Game Board Message
+
         // Send messages to clients
-        for (Socket client : clients) {
-            if (!client.isClosed()) {
-                try {
-                    // sends output to the socket
-                    Utils.writeMessage(new PrintWriter(client.getOutputStream(), true), str);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        for (ObjectOutputStream out : dOut) {
+            try {
+                out.writeUTF(msg);
+                out.writeInt(game.getCurrentPlayer());
+                out.flush();
+            } catch (Exception e) {
+                System.out.println("Could not update information");
+                e.printStackTrace();
             }
         }
     }
@@ -85,7 +100,7 @@ public class Server {
         System.out.println("Sending start info to players");
 
         // Send messages to clients
-        for(int i = 0; i < clients.size(); i++) {
+        for(int i = 0; i < dOut.size(); i++) {
             // Creating start message
             String startMessage = """
                     Three players are ready
@@ -94,14 +109,12 @@ public class Server {
 
             startMessage += "You are Player" + (i+1) + "\n";
 
-            if(!clients.get(i).isClosed()) {
-                try{
-                    // sends output to the socket
-                    Utils.writeMessage(new PrintWriter(clients.get(i).getOutputStream(), true), startMessage);
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                dOut.get(i).writeUTF(startMessage);
+                dOut.get(i).writeInt(i);
+                dOut.get(i).flush();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -114,10 +127,18 @@ public class Server {
         System.out.println("Sending final message to players");
 
         // Creating final message
-        String finalMessage = "final_message\n";
+        String finalMessage = "final_message";
 
         // Send messages to clients
-        sendString(finalMessage);
+        for (ObjectOutputStream out : dOut) {
+            try {
+                out.writeUTF(finalMessage);
+                out.writeInt(-1);
+                out.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
