@@ -180,7 +180,7 @@ public class ModelTest {
         Board b = new Board(output);
         assertEquals("Player 1’s turn", b.turnInfo());
         assertEquals(0, b.tableSize());
-        assertEquals(9, b.tableSize());
+        assertEquals(9, b.handSize());
         assertEquals(0, b.countMeld("R1 R2 R3"));
         assertEquals("R1 R2 R3 R7 R9 B1 B2 B3 B4", b.getHand());
 
@@ -199,7 +199,7 @@ public class ModelTest {
         b = new Board(output);
         assertEquals("Player 2’s turn", b.turnInfo());
         assertEquals(2, b.tableSize());
-        assertEquals(6, b.tableSize());
+        assertEquals(6, b.handSize());
         assertEquals(1, b.countMeld("R1 R2 R3"));
         assertEquals("{*R1 *R2 *R3}", b.getMeld(0));
         assertEquals("R7 R9 B1 B2 B3 B4", b.getHand());
