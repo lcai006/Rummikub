@@ -155,18 +155,30 @@ public class Meld {
     }
 
     public void newHighLight() {
-
+        for (Tile t: meld) {
+            t.newHighlight();
+        }
     }
 
     public void newHighLight(String tiles) {
-
+        for (Tile t: meld) {
+            if (tiles.contains(t.toString())) {
+                t.newHighlight();
+            }
+        }
     }
 
     public void moveHighLight(String tiles) {
-
+        for (Tile t: meld) {
+            if (tiles.contains(t.toString())) {
+                t.moveHighlight();
+            }
+        }
     }
 
     public void removeHighlight() {
-
+        for (Tile t: meld) {
+            t.removeHighlight();
+        }
     }
 }
