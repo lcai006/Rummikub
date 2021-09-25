@@ -60,7 +60,7 @@ public class GameTest {
         assertEquals("Player 3’s turn", b.turnInfo());
         assertEquals(1, b.tableSize());
         assertEquals(11, b.handSize());
-        assertEquals(tiles1, b.getMeld(0));
+        assertEquals("{*R11 *R12 *R13}", b.getMeld(0));
         assertEquals(oldHand.toString(), b.getHand());
 
         // P3 plays {KH KS KC} and {2C 2H 2D}
@@ -74,8 +74,9 @@ public class GameTest {
         assertEquals("Player 1’s turn", b.turnInfo());
         assertEquals(3, b.tableSize());
         assertEquals(8, b.handSize());
-        assertEquals(tiles2, b.getMeld(1));
-        assertEquals(tiles3, b.getMeld(2));
+        assertEquals("{R11 R12 R13}", b.getMeld(0));
+        assertEquals("{*R13 *B13 *G13}", b.getMeld(1));
+        assertEquals("{*G2 *R2 *O2}", b.getMeld(2));
         assertEquals(oldHand.toString(), b.getHand());
 
         // P3 plays {QH QS QD}
@@ -89,7 +90,7 @@ public class GameTest {
         assertEquals("Player 2’s turn", b.turnInfo());
         assertEquals(0, b.tableSize());
         assertEquals(12, b.handSize());
-        assertEquals(tiles1, b.getMeld(3));
+        assertEquals("{*R12 *B12 *O12}", b.getMeld(3));
         assertEquals(oldHand.toString(), b.getHand());
     }
 
