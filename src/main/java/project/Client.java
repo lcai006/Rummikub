@@ -2,6 +2,7 @@ package project;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client implements Runnable{
@@ -10,11 +11,14 @@ public class Client implements Runnable{
     private int currentPlayer;
     private ObjectInputStream dIn;
     private ObjectOutputStream dOut;
-    private String currentOutput;
+    private ArrayList<String> gameOutputs;
+    private Scanner scan;
 
     public Client(String host, int serverPort) {
         this.serverHost = host;
         this.serverPort = serverPort;
+        gameOutputs = new ArrayList<>();
+        scan = new Scanner(System.in);
     }
 
     public static void main(String[] args) {
@@ -47,31 +51,36 @@ public class Client implements Runnable{
             System.out.println(startInfo);
             int playerID = dIn.readInt();
 
-            String message = dIn.readUTF();
-            currentPlayer = dIn.readInt();
+            String message = "";
+
             while (!message.equals("final_message")) {
                 message = receiveUpdate();
 
                 if (playerID == currentPlayer) {
+                    System.out.println("Your action:");
                     // Reads player's action
-                    Scanner scan = new Scanner(System.in);
                     StringBuilder action = new StringBuilder();
-                    String input = scan.nextLine();
-                    if (input.equals("draw")) {
-                        action.append(input);
-                    } else {
-                        while (!input.equals("end")) {
-                            action.append(input);
-                            input = scan.nextLine();
-                        }
-                    }
-                    scan.close();
 
-                    // Sends player inputs to the socket
-                    sendAction(action.toString());
+                    String input;
+
+                    if (scan.hasNext()) {
+                        input = scan.nextLine();
+
+                        if (input.equals("draw")) {
+                            action.append(input);
+                        } else {
+                            while (!input.equals("end")) {
+                                action.append(input).append("\n");
+                                input = scan.nextLine();
+                            }
+                        }
+                        // Sends player inputs to the socket
+                        sendAction(action.toString());
+                    }
                 }
             }
 
+            scan.close();
             // Close socket
             socket.close();
 
@@ -103,6 +112,7 @@ public class Client implements Runnable{
         try {
             String msg = dIn.readUTF();
             currentPlayer = dIn.readInt();
+            gameOutputs.add(msg);
             System.out.println(msg);
             return msg;
         } catch (Exception e) {
@@ -113,19 +123,35 @@ public class Client implements Runnable{
     }
 
     /**
-     * set user input
+     * set user input for testing
      *
      */
     public void setInput(String input) {
-
+        scan = new Scanner(input);
     }
 
     /**
-     * get output of server response
+     * get an output of server response
      *
      */
-    public String getOutput() {
-        return currentOutput;
+    public String getOutput(int i) {
+        return gameOutputs.get(i);
+    }
+
+    /**
+     * get size of outputs
+     *
+     */
+    public int outputSize() {
+        return gameOutputs.size();
+    }
+
+    /**
+     * reset outputs for new game
+     *
+     */
+    public void resetOutput() {
+        gameOutputs = new ArrayList<>();
     }
 
     /**
