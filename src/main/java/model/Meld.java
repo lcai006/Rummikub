@@ -153,4 +153,20 @@ public class Meld {
 
         return true;
     }
+
+    public void newHighLight() {
+
+    }
+
+    public void newHighLight(String tiles) {
+
+    }
+
+    public void moveHighLight(String tiles) {
+
+    }
+
+    public void removeHighlight() {
+
+    }
 }

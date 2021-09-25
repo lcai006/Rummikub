@@ -121,13 +121,16 @@ public class ModelTest {
     public void testMeld() {
         String tiles = "B2 B4 B3";
         Meld m1 = new Meld(tiles);
+        m1.newHighLight();
         assertEquals(3, m1.size());
         assertEquals("run", m1.type());
-        assertEquals("{B2 B3 B4}", m1.toString());
+        assertEquals("{*B2 *B3 *B4}", m1.toString());
 
+        m1.removeHighlight();
         m1.add("B5");
+        m1.newHighLight("B5");
         assertEquals(4, m1.size());
-        assertEquals("{B2 B3 B4 B5}", m1.toString());
+        assertEquals("{B2 B3 B4 *B5}", m1.toString());
 
         tiles = "G12 R12 O12 B12";
         Meld m2 = new Meld(tiles);
