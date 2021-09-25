@@ -151,7 +151,7 @@ public class Client implements Runnable{
      *
      */
     public void resetOutput() {
-        gameOutputs = new ArrayList<>();
+        gameOutputs.clear();
     }
 
     /**
