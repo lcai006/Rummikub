@@ -36,5 +36,22 @@ public class Table {
         return str.toString();
     }
 
+    public void newHighLight(int i) {
+        melds.get(i).newHighLight();
+    }
+
+    public void newHighLight(int i, String tiles) {
+        melds.get(i).newHighLight(tiles);
+    }
+
+    public void moveHighLight(int i, String tiles) {
+        melds.get(i).moveHighLight(tiles);
+    }
+
+    public void removeHighlight() {
+        for (Meld m: melds) {
+            m.removeHighlight();
+        }
+    }
 
 }
