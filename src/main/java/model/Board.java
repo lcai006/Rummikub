@@ -64,6 +64,9 @@ public class Board {
 
     // return the size of hand
     public int handSize() {
+        if (hand.isEmpty()) {
+            return 0;
+        }
         Hand h = new Hand(hand.toString());
         return h.size();
     }
