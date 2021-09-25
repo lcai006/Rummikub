@@ -3,23 +3,29 @@ package project;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
+import static org.awaitility.Awaitility.await;
 
 public class Server implements Runnable{
+    private int test;
     private final int serverPort;
     private ArrayList<Socket> clients;
     private ServerSocket serverSocket;
     private ArrayList<ObjectInputStream> dIn;
     private ArrayList<ObjectOutputStream> dOut;
+    private Game game;
 
-    public Server() {
+    public Server(int test) {
         this.serverPort = Config.SERVER_PORT_NUMBER;
         dIn = new ArrayList<>();
         dOut = new ArrayList<>();
+        game = new Game();
+        this.test = test;
     }
 
-    public static void main(String[] args) {
-        Server server = new Server();
+    public static void main(String[] args) throws IOException {
+        Server server = new Server(0);
         System.out.println("Starting game server...");
         server.startServer();
     }
@@ -28,7 +34,7 @@ public class Server implements Runnable{
      * Starting the server and listen to the server port
      *
      */
-    public void startServer(){
+    public void startServer() throws IOException {
         System.out.println("Waiting for players...");
         clients = new ArrayList<>();
         try {
@@ -41,10 +47,10 @@ public class Server implements Runnable{
         acceptClients();
         sendStartInfo();
 
-        // Game logic
-        Game game = new Game();
+        startGame();
 
         sendFinalMessage();
+        // waiting clients' disconnection then close
         while (true) {
             boolean isClosed = false;
             try{
@@ -64,6 +70,27 @@ public class Server implements Runnable{
                 e.printStackTrace();
             }
         }
+    }
+
+    private void startGame() {
+        if (test == 1) {
+            // waiting for setting test game
+            await().until(() -> test == 2);
+        }
+        // Game logic
+        while (test != 0 || !game.isEnd()) {
+            update(game);
+            String action = "";
+            try {
+                action = dIn.get(game.getCurrentPlayer()).readUTF();
+            } catch (IOException e){
+                System.err.println("Action not received");
+                System.exit(1);
+            }
+
+            game.action(action);
+        }
+
     }
 
     /**
@@ -92,16 +119,12 @@ public class Server implements Runnable{
      *
      */
     public void update(Game game) {
-        String msg = "";
-
-        // Game Board Message
-
         // Send messages to clients
-        for (ObjectOutputStream out : dOut) {
+        for (int i = 0; i < 3; i++) {
             try {
-                out.writeUTF(msg);
-                out.writeInt(game.getCurrentPlayer());
-                out.flush();
+                dOut.get(i).writeUTF(game.getOutput(i));
+                dOut.get(i).writeInt(game.getCurrentPlayer());
+                dOut.get(i).flush();
             } catch (Exception e) {
                 System.out.println("Could not update information");
                 e.printStackTrace();
@@ -163,7 +186,8 @@ public class Server implements Runnable{
      *
      */
     public void reset(String hand1, String hand2, String hand3) {
-
+        game.reset(hand1, hand2, hand3);
+        test = 2;
     }
 
     /**
@@ -172,6 +196,10 @@ public class Server implements Runnable{
      */
     @Override
     public void run() {
-        startServer();
+        try {
+            startServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
