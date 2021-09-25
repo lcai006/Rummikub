@@ -2,15 +2,15 @@ package project;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Client {
+public class Client implements Runnable{
     private final String serverHost;
     private final int serverPort;
     private int currentPlayer;
     private ObjectInputStream dIn;
     private ObjectOutputStream dOut;
+    private String currentOutput;
 
     public Client(String host, int serverPort) {
         this.serverHost = host;
@@ -112,4 +112,28 @@ public class Client {
         return "";
     }
 
+    /**
+     * set user input
+     *
+     */
+    public void setInput(String input) {
+
+    }
+
+    /**
+     * get output of server response
+     *
+     */
+    public String getOutput() {
+        return currentOutput;
+    }
+
+    /**
+     * Override Thread method
+     *
+     */
+    @Override
+    public void run() {
+        startClient();
+    }
 }

@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Server {
+public class Server implements Runnable{
     private final int serverPort;
     private ArrayList<Socket> clients;
     private ServerSocket serverSocket;
@@ -46,6 +46,23 @@ public class Server {
 
         sendFinalMessage();
         while (true) {
+            boolean isClosed = false;
+            try{
+                for (ObjectInputStream in: dIn) {
+                    // if a client disconnects
+                    if (in.read() == -1) {
+                        isClosed = true;
+                    } else {
+                        isClosed = false;
+                        break;
+                    }
+                }
+                if (isClosed) {
+                    break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -145,8 +162,16 @@ public class Server {
      * Reset game
      *
      */
-    public void reset() {
+    public void reset(String hand1, String hand2, String hand3) {
 
     }
 
+    /**
+     * Override Thread method
+     *
+     */
+    @Override
+    public void run() {
+        startServer();
+    }
 }
