@@ -54,4 +54,8 @@ public class Table {
         }
     }
 
+    public int size() {
+        return melds.size();
+    }
+
 }

@@ -36,6 +36,7 @@ public class Board {
             }
 
             if (label.equals("Table")) {
+                line = line.split(": ")[1];
                 oriMelds.add(line);
                 line = line.replace("*", "");
                 line = line.replace("!", "");

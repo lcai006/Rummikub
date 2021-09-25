@@ -12,18 +12,20 @@ public class Meld {
         // create tiles from the string
         String[] tiles = str.split("\\s+");
 
-        for (String tile: tiles) {
-            Tile t = new Tile(tile);
-            meld.add(t);
-        }
+        if (tiles.length >= 3) {
+            for (String tile : tiles) {
+                Tile t = new Tile(tile);
+                meld.add(t);
+            }
 
-        if (meld.get(0).number() == meld.get(1).number()) {
-            type = "set";
-        } else {
-            type = "run";
-        }
+            if (meld.get(0).number() == meld.get(1).number()) {
+                type = "set";
+            } else {
+                type = "run";
+            }
 
-        sort();
+            sort();
+        }
     }
 
     public int size() {
