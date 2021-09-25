@@ -164,4 +164,44 @@ public class ModelTest {
         table.addTile(1, "B1 B10");
         assertEquals("Meld 1: {B10 B11 B12 B13 B1}\nMeld 2: {G12 B12 O12}\n", table.toString());
     }
+
+    @DisplayName("test board object parsing outputs")
+    @Test
+    public void testBoard() {
+        String output = """
+                    Player 1’s turn
+                    
+                    Table
+                    
+                    Hand
+                    R1 R2 R3 R7 R9
+                    B1 B2 B3 B4
+                    """;
+        Board b = new Board(output);
+        assertEquals("Player 1’s turn", b.turnInfo());
+        assertEquals(0, b.tableSize());
+        assertEquals(9, b.tableSize());
+        assertEquals(0, b.countMeld("R1 R2 R3"));
+        assertEquals("R1 R2 R3 R7 R9 B1 B2 B3 B4", b.getHand());
+
+        output = """
+                    Player 2’s turn
+                    
+                    Table
+                    {*R1 *R2 *R3}
+                    {R11 B11 G11}
+                    
+                    Hand
+                    R7 R9
+                    B1 B2 B3 B4
+                    """;
+
+        b = new Board(output);
+        assertEquals("Player 2’s turn", b.turnInfo());
+        assertEquals(2, b.tableSize());
+        assertEquals(6, b.tableSize());
+        assertEquals(1, b.countMeld("R1 R2 R3"));
+        assertEquals("{*R1 *R2 *R3}", b.getMeld(0));
+        assertEquals("R7 R9 B1 B2 B3 B4", b.getHand());
+    }
 }
