@@ -191,8 +191,8 @@ public class ModelTest {
                     Player 2’s turn
                     
                     Table
-                    {*R1 *R2 *R3}
-                    {R11 B11 G11}
+                    Meld 1: {*R1 *R2 *R3}
+                    Meld 2: {R11 B11 G11}
                     
                     Hand
                     R7 R9
