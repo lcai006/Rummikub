@@ -33,7 +33,6 @@ public class GameTest {
     }
 
     @DisplayName("test player sequence and UI updates")
-    @Order(1)
     @Test
     public void testPlayerSequence() {
         String tiles1 = "R11 R12 R13";
@@ -98,7 +97,6 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-    @Order(2)
     @Test
     public void testInitialPlay1() {
         String tiles = "R11 R12 R13";
@@ -122,7 +120,6 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-    @Order(3)
     @Test
     public void testInitialPlay2() {
         String tiles = "R12 G12 B12";
@@ -146,7 +143,6 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-    @Order(4)
     @Test
     public void testInitialPlay3() {
         String tiles = "R9 R10 R11 R12 R13";
@@ -300,6 +296,46 @@ public class GameTest {
     }
 
 
+
+    @Test
+    public void testDraw1() {
+        String tiles1 = "G2 R2 O2 G3 R3 O3 O8 O9 O10 R8 R9 R10 G12 R7";
+        clients.get(0).setInput("draw" + System.lineSeparator());
+        clients.get(1).setInput("");
+        clients.get(2).setInput("");
+        server.reset(tiles1, "", "");
+
+        // waiting for game
+        await().until(() -> clients.get(0).outputSize() > 1);
+
+        String out = clients.get(0).getOutput(1);
+        Board b = new Board(out);
+        assertEquals(15, b.handSize());
+        String[] tiles = tiles1.split(" ");
+        for (String s: tiles) {
+            assertTrue(b.getHand().contains(s));
+        }
+    }
+
+    @Test
+    public void testDraw2() {
+        String tiles1 = "G2 G2 O2 R3 B3 B3 R5 B6 O7 R9 R10 G11 B12 B13";
+        clients.get(0).setInput("draw" + System.lineSeparator());
+        clients.get(1).setInput("");
+        clients.get(2).setInput("");
+        server.reset(tiles1, "", "");
+
+        // waiting for game
+        await().until(() -> clients.get(0).outputSize() > 1);
+
+        String out = clients.get(0).getOutput(1);
+        Board b = new Board(out);
+        assertEquals(15, b.handSize());
+        String[] tiles = tiles1.split(" ");
+        for (String s: tiles) {
+            assertTrue(b.getHand().contains(s));
+        }
+    }
 
     @AfterEach
     public void close() throws IOException {
