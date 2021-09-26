@@ -45,7 +45,7 @@ public class GameTest {
         server.reset(tiles4, tiles1, tiles2+" "+tiles3);
 
         // waiting for game
-        await().until(() -> clients.get(2).outputSize() > 1);
+        await().until(() -> clients.get(2).outputSize() > 4);
         String out = clients.get(0).getOutput(0);
         Board b = new Board(out);
         assertEquals("Player 1’s turn", b.turnInfo());
@@ -94,6 +94,109 @@ public class GameTest {
         assertEquals(12, b.handSize());
         assertEquals("{*R12 *B12 *O12}", b.getMeld(3));
         assertEquals(oldHand.toString(), b.getHand());
+    }
+
+    @Nested
+    class TestInitialPlay{
+        @Test
+        public void testInitialPlay1() {
+            for (Client c: clients) {
+                c.resetOutput();
+            }
+
+            String tiles = "R11 R12 R13";
+            clients.get(0).setInput("new " + tiles + System.lineSeparator() + "end" + System.lineSeparator());
+            server.reset(tiles, "", "");
+
+            // waiting for game
+            await().until(() -> clients.get(0).outputSize() > 1);
+            String out = clients.get(0).getOutput(0);
+            Board b = new Board(out);
+            Hand oldHand = new Hand(b.getHand());
+            oldHand.play(tiles);
+
+            // P1 plays {JH QH KH}
+            out = clients.get(0).getOutput(1);
+            b = new Board(out);
+            assertEquals(11, b.handSize());
+            assertEquals("{*R11 *R12 *R13}", b.getMeld(0));
+            assertEquals(oldHand.toString(), b.getHand());
+        }
+
+        @Test
+        public void testInitialPlay2() {
+            for (Client c: clients) {
+                c.resetOutput();
+            }
+
+            String tiles = "R12 G12 B12";
+            clients.get(0).setInput("new " + tiles + System.lineSeparator() + "end" + System.lineSeparator());
+            server.reset(tiles, "", "");
+
+            // waiting for game
+            await().until(() -> clients.get(0).outputSize() > 1);
+            String out = clients.get(0).getOutput(0);
+            Board b = new Board(out);
+            Hand oldHand = new Hand(b.getHand());
+            oldHand.play(tiles);
+
+            // P1 plays {QH QC QS}
+            out = clients.get(0).getOutput(1);
+            b = new Board(out);
+            assertEquals(11, b.handSize());
+            assertEquals("{*R12 *G12 *B13}", b.getMeld(0));
+            assertEquals(oldHand.toString(), b.getHand());
+        }
+
+        @Test
+        public void testInitialPlay3() {
+            for (Client c: clients) {
+                c.resetOutput();
+            }
+
+            String tiles = "R9 R10 R11 R12 R13";
+            clients.get(0).setInput("new " + tiles + System.lineSeparator() + "end" + System.lineSeparator());
+            server.reset(tiles, "", "");
+
+            // waiting for game
+            await().until(() -> clients.get(0).outputSize() > 1);
+            String out = clients.get(0).getOutput(0);
+            Board b = new Board(out);
+            Hand oldHand = new Hand(b.getHand());
+            oldHand.play(tiles);
+
+            // P1 plays {9H 10H JH QH KH}
+            out = clients.get(0).getOutput(1);
+            b = new Board(out);
+            assertEquals(9, b.handSize());
+            assertEquals("{*R9 *R10 *R11 *R12 *R13}", b.getMeld(0));
+            assertEquals(oldHand.toString(), b.getHand());
+        }
+
+        @Test
+        public void testInitialPlay4() {
+            for (Client c: clients) {
+                c.resetOutput();
+            }
+
+            String tiles = "R13 G13 B13 O13";
+            clients.get(0).setInput("new " + tiles + System.lineSeparator() + "end" + System.lineSeparator());
+            server.reset(tiles, "", "");
+
+            // waiting for game
+            await().until(() -> clients.get(0).outputSize() > 1);
+            String out = clients.get(0).getOutput(0);
+            Board b = new Board(out);
+            Hand oldHand = new Hand(b.getHand());
+            oldHand.play(tiles);
+
+            // P1 plays {KH KC KS KD}
+            out = clients.get(0).getOutput(1);
+            b = new Board(out);
+            assertEquals(10, b.handSize());
+            assertEquals("{*R13 *G13 *B13 *O13}", b.getMeld(0));
+            assertEquals(oldHand.toString(), b.getHand());
+        }
     }
 
 }
