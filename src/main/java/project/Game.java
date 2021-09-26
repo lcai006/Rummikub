@@ -115,7 +115,7 @@ public class Game {
             }
         }
 
-        return score > 30;
+        return score >= 30;
     }
 
     public boolean isEnd() {
