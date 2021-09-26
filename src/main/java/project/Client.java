@@ -40,7 +40,7 @@ public class Client implements Runnable{
 
             try{
                 // Waiting for server response
-                Thread.sleep(1000);
+                Thread.sleep(300);
             } catch (Exception e) {
                 e.printStackTrace();
             }

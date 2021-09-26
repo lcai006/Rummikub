@@ -6,15 +6,15 @@ import org.junit.jupiter.api.*;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameTest {
     static Server server;
     static ArrayList<Client> clients;
 
-    @BeforeAll
-    public static void setupGame() throws InterruptedException {
+    @BeforeEach
+    public void setupGame() throws InterruptedException {
         server = new Server(1);
         clients = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -23,19 +23,12 @@ public class GameTest {
         }
         Thread serverThread = new Thread(server);
         serverThread.start();
+        Thread.sleep(20);
         for (Client c : clients) {
             Thread thread = new Thread(c);
             thread.start();
             // make sure index matches player id
             Thread.sleep(10);
-        }
-        Thread.sleep(1000);
-    }
-
-    @BeforeEach
-    public void resetOutput() {
-        for (Client c : clients) {
-            c.resetOutput();
         }
     }
 
@@ -177,7 +170,6 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-    @Order(5)
     @Test
     public void testInitialPlay4() {
         String tiles = "R13 G13 B13 O13";
@@ -201,7 +193,6 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-    @Order(6)
     @Test
     public void testInitialPlay5() {
         String tiles1 = "R2 R3 R4";
@@ -227,7 +218,6 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-    @Order(7)
     @Test
     public void testInitialPlay6() {
         String tiles1 = "R2 B2 O2";
@@ -255,7 +245,6 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-    @Order(8)
     @Test
     public void testInitialPlay7() {
         String tiles1 = "R8 G8 O8";
@@ -281,7 +270,6 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-    @Order(9)
     @Test
     public void testInitialPlay8() {
         String tiles1 = "R2 O2 B2";
@@ -309,5 +297,14 @@ public class GameTest {
         assertEquals("{*R3 *B3 *O3}", b.getMeld(2));
         assertEquals("{*B5 *B6 *B7}", b.getMeld(3));
         assertEquals(oldHand.toString(), b.getHand());
+    }
+
+
+
+    @AfterEach
+    public void close() throws IOException {
+        server.close();
+        server = null;
+        clients.clear();
     }
 }
