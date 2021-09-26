@@ -47,7 +47,15 @@ public class Server implements Runnable{
         acceptClients();
         sendStartInfo();
 
-        startGame();
+        if (test == 1) {
+            for (Socket s : clients) {
+                s.setSoTimeout(30);
+            }
+        }
+
+        while (test != 0) {
+            startGame();
+        }
 
         sendFinalMessage();
         // waiting clients' disconnection then close
@@ -72,7 +80,7 @@ public class Server implements Runnable{
         }
     }
 
-    private void startGame() {
+    private void startGame() throws SocketException {
         if (test == 1) {
             // waiting for setting test game
             await().until(() -> test == 2);
@@ -80,15 +88,18 @@ public class Server implements Runnable{
         // Game logic
         while (test != 0 || !game.isEnd()) {
             update(game);
-            String action = "";
+            String action;
             try {
                 action = dIn.get(game.getCurrentPlayer()).readUTF();
-            } catch (IOException e){
-                System.err.println("Action not received");
-                System.exit(1);
+                game.action(action);
+            } catch (SocketException e) {
+                test = 1;
+                startGame();
+            } catch (IOException e) {
+                test = 1;
+                System.out.println("Action not received");
+                break;
             }
-
-            game.action(action);
         }
 
     }
