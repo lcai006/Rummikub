@@ -127,12 +127,20 @@ public class Meld {
             // Checks if the sequence is valid
             numList.sort(null);
             int current = 0;
-            if (numList.contains(1) && numList.contains(13)) {
-                // if a run contains 1 and 13, ignore 1
+            if (numList.contains(1) && numList.contains(13) && numList.size() < 13) {
+                for (int i = 0; i < numList.size(); i++) {
+                    if (current == 0) {
+                        current = numList.get(i);
+                        numList.set(i, current+13);
+                    } else if (current + 1 == numList.get(i)) {
+                        current = numList.get(i);
+                        numList.set(i, current+13);
+                    }
+                }
+                numList.sort(null);
+                current = 0;
                 for (int num: numList) {
                     if (current == 0) {
-                        current = num;
-                    } else if (current == 1) {
                         current = num;
                     } else if (current + 1 == num) {
                         current = num;
@@ -188,12 +196,7 @@ public class Meld {
     public int score() {
         int s = 0;
         for (Tile t: meld) {
-            // For cases like 12,13,1
-            if (t.number() == 1 && s > 10) {
-                s += 10;
-            } else {
-                s += Math.min(t.number(), 10);
-            }
+            s += Math.min(t.number(), 10);
         }
         return s;
     }
