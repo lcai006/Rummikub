@@ -188,7 +188,12 @@ public class Meld {
     public int score() {
         int s = 0;
         for (Tile t: meld) {
-            s += Math.min(t.number(), 10);
+            // For cases like 12,13,1
+            if (t.number() == 1 && s > 10) {
+                s += 10;
+            } else {
+                s += Math.min(t.number(), 10);
+            }
         }
         return s;
     }
