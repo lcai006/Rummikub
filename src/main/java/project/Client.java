@@ -74,6 +74,7 @@ public class Client implements Runnable{
                                 input = scan.nextLine();
                             }
                         }
+
                         // Sends player inputs to the socket
                         sendAction(action.toString());
                     }

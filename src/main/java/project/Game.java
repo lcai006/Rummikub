@@ -10,6 +10,7 @@ public class Game {
     private Table table;
     private ArrayList<Hand> hands;
     private boolean isEnd;
+    private ArrayList<Boolean> isInitPlay;
 
     public Game() {
         reset("", "", "");
@@ -29,6 +30,10 @@ public class Game {
         hands.add(h);
         h = new Hand(listToString(deck.createHand(hand3)));
         hands.add(h);
+        isInitPlay = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            isInitPlay.add(true);
+        }
     }
 
     public static String listToString(ArrayList<String> list) {
@@ -57,6 +62,15 @@ public class Game {
     public void action(String act) {
         table.removeHighlight();
         String[] lines = act.split("\n");
+
+        if (isInitPlay.get(currentPlayer)) {
+            if (lines[0].length() > 4) {
+                if (!checkInit(lines)) {
+                    return;
+                }
+            }
+        }
+
         for (String line: lines) {
             if (line.equals("draw")) {
                 draw();
@@ -87,6 +101,21 @@ public class Game {
         table.createMeld(tiles);
         table.newHighLight(table.size() - 1);
         hands.get(currentPlayer).play(tiles);
+    }
+
+    // check initial play with at least 30 points
+    public boolean checkInit(String[] lines) {
+        int score = 0;
+        for (String line: lines) {
+            String[] str = line.split(" ", 2);
+            if (str[0].equals("new")) {
+                String tiles = line.substring(4);
+                Meld m = new Meld(tiles);
+                score += m.score();
+            }
+        }
+
+        return score > 30;
     }
 
     public boolean isEnd() {

@@ -183,4 +183,13 @@ public class Meld {
             t.removeHighlight();
         }
     }
+
+    // Calculate score for a meld
+    public int score() {
+        int s = 0;
+        for (Tile t: meld) {
+            s += t.number();
+        }
+        return s;
+    }
 }

@@ -49,7 +49,7 @@ public class Server implements Runnable{
 
         if (test == 1) {
             for (Socket s : clients) {
-                s.setSoTimeout(30);
+                s.setSoTimeout(50);
             }
         }
 
