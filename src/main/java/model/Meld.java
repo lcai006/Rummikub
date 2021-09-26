@@ -188,7 +188,7 @@ public class Meld {
     public int score() {
         int s = 0;
         for (Tile t: meld) {
-            s += t.number();
+            s += Math.min(t.number(), 10);
         }
         return s;
     }
