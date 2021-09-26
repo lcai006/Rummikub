@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameTest {
     static Server server;
     static ArrayList<Client> clients;
@@ -39,6 +40,7 @@ public class GameTest {
     }
 
     @DisplayName("test player sequence and UI updates")
+    @Order(1)
     @Test
     public void testPlayerSequence() {
         String tiles1 = "R11 R12 R13";
@@ -103,11 +105,13 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
-
+    @Order(2)
     @Test
     public void testInitialPlay1() {
         String tiles = "R11 R12 R13";
         clients.get(0).setInput("new " + tiles + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("");
+        clients.get(2).setInput("");
         server.reset(tiles, "", "");
 
         // waiting for game
@@ -125,10 +129,13 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
+    @Order(3)
     @Test
     public void testInitialPlay2() {
         String tiles = "R12 G12 B12";
         clients.get(0).setInput("new " + tiles + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("");
+        clients.get(2).setInput("");
         server.reset(tiles, "", "");
 
         // waiting for game
@@ -146,10 +153,13 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
+    @Order(4)
     @Test
     public void testInitialPlay3() {
         String tiles = "R9 R10 R11 R12 R13";
         clients.get(0).setInput("new " + tiles + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("");
+        clients.get(2).setInput("");
         server.reset(tiles, "", "");
 
         // waiting for game
@@ -167,10 +177,13 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
+    @Order(5)
     @Test
     public void testInitialPlay4() {
         String tiles = "R13 G13 B13 O13";
         clients.get(0).setInput("new " + tiles + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("");
+        clients.get(2).setInput("");
         server.reset(tiles, "", "");
 
         // waiting for game
