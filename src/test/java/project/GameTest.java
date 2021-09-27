@@ -312,7 +312,6 @@ public class GameTest {
         Hand oldHand = new Hand(b.getHand());
         oldHand.play("R11 R12 R13 G2 G3 G4");
 
-        // P1 plays {R11 R12 R13}
         out = clients.get(0).getOutput(4);
         b = new Board(out);
         assertEquals(8, b.handSize());
@@ -340,7 +339,6 @@ public class GameTest {
         Hand oldHand = new Hand(b.getHand());
         oldHand.play("R11 R12 R13 G2 G3 G4 O8 O9 O10");
 
-        // P1 plays {R11 R12 R13}
         out = clients.get(0).getOutput(4);
         b = new Board(out);
         assertEquals(5, b.handSize());
@@ -366,7 +364,6 @@ public class GameTest {
         Hand oldHand = new Hand(b.getHand());
         oldHand.play("R11 R12 R13 G2 R2 O2");
 
-        // P1 plays {R11 R12 R13}
         out = clients.get(0).getOutput(4);
         b = new Board(out);
         assertEquals(8, b.handSize());
@@ -391,7 +388,6 @@ public class GameTest {
         Hand oldHand = new Hand(b.getHand());
         oldHand.play("R11 R12 R13 G2 R2 O2 O8 R8 B8 G8");
 
-        // P1 plays {R11 R12 R13}
         out = clients.get(0).getOutput(4);
         b = new Board(out);
         assertEquals(4, b.handSize());
@@ -417,7 +413,6 @@ public class GameTest {
         Hand oldHand = new Hand(b.getHand());
         oldHand.play("R11 R12 R13 G2 R2 O2 O8 O9 O10");
 
-        // P1 plays {R11 R12 R13}
         out = clients.get(0).getOutput(4);
         b = new Board(out);
         assertEquals(5, b.handSize());
@@ -439,7 +434,6 @@ public class GameTest {
         // waiting for game
         await().until(() -> clients.get(0).outputSize() > 4);
 
-        // P1 plays {R11 R12 R13}
         String out = clients.get(0).getOutput(4);
         Board b = new Board(out);
         assertEquals(0, b.handSize());
@@ -488,7 +482,25 @@ public class GameTest {
         }
     }
 
+    @Test
+    public void testAddTiles() {
+        String tiles1 = "R11 R12 R13 B10 O9 O10";
+        String tiles2 = "B7 B8 B9";
+        String tiles3 = "O11 O12 O13";
+        clients.get(0).setInput("new R11 R12 R13" + System.lineSeparator() + "end" + System.lineSeparator() + "add 2 B10" + System.lineSeparator() + "add 3 O9 O10" + System.lineSeparator() +  "end" + System.lineSeparator());
+        clients.get(1).setInput("new B7 B8 B9" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(2).setInput("new O11 O12 O13" + System.lineSeparator() + "end" + System.lineSeparator());
+        server.reset(tiles1, tiles2, tiles3);
 
+        // waiting for game
+        await().until(() -> clients.get(0).outputSize() > 4);
+
+        String out = clients.get(0).getOutput(4);
+        Board b = new Board(out);
+        assertEquals(8, b.handSize());
+        assertEquals("{B7 B8 B9 *B10}", b.getMeld(1));
+        assertEquals("{*O9 *O10 O11 O12 O13}", b.getMeld(2));
+    }
 
     @AfterEach
     public void close() throws IOException {
