@@ -66,6 +66,7 @@ public class Game {
         if (isInitPlay.get(currentPlayer)) {
             if (lines[0].length() > 4) {
                 if (!checkInit(lines)) {
+                    System.out.println("Need 30 points for initial play");
                     return;
                 }
                 isInitPlay.set(currentPlayer, false);
@@ -76,11 +77,21 @@ public class Game {
             if (line.equals("draw")) {
                 draw();
             } else {
-                String[] str = line.split(" ", 2);
+                String[] str = line.split(" ", 3);
                 if (str[0].equals("new")) {
                     String tiles = line.substring(4);
                     newMeld(tiles);
+                } else if (str[0].equals("add")){
+                    int num = Integer.parseInt(str[1]);
+                    String tiles;
+                    if (Integer.parseInt(str[1]) < 10) {
+                        tiles = line.substring(6);
+                    } else {
+                        tiles = line.substring(7);
+                    }
+                    addToMeld(num - 1, tiles);
                 }
+
             }
         }
 
@@ -101,6 +112,13 @@ public class Game {
     public void newMeld(String tiles) {
         table.createMeld(tiles);
         table.newHighLight(table.size() - 1);
+        hands.get(currentPlayer).play(tiles);
+    }
+
+    // current player plays a new meld
+    public void addToMeld(int i, String tiles) {
+        table.addTile(i, tiles);
+        table.newHighLight(i, tiles);
         hands.get(currentPlayer).play(tiles);
     }
 

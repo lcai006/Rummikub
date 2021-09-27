@@ -484,11 +484,11 @@ public class GameTest {
 
     @Test
     public void testAddTiles() {
-        String tiles1 = "R11 R12 R13 B10 O9 O10";
-        String tiles2 = "B7 B8 B9";
+        String tiles1 = "R11 R12 R13 B9 O9 O10";
+        String tiles2 = "B10 B11 B12";
         String tiles3 = "O11 O12 O13";
-        clients.get(0).setInput("new R11 R12 R13" + System.lineSeparator() + "end" + System.lineSeparator() + "add 2 B10" + System.lineSeparator() + "add 3 O9 O10" + System.lineSeparator() +  "end" + System.lineSeparator());
-        clients.get(1).setInput("new B7 B8 B9" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(0).setInput("new R11 R12 R13" + System.lineSeparator() + "end" + System.lineSeparator() + "add 2 B9" + System.lineSeparator() + "add 3 O9 O10" + System.lineSeparator() +  "end" + System.lineSeparator());
+        clients.get(1).setInput("new B10 B11 B12" + System.lineSeparator() + "end" + System.lineSeparator());
         clients.get(2).setInput("new O11 O12 O13" + System.lineSeparator() + "end" + System.lineSeparator());
         server.reset(tiles1, tiles2, tiles3);
 
@@ -498,7 +498,7 @@ public class GameTest {
         String out = clients.get(0).getOutput(4);
         Board b = new Board(out);
         assertEquals(8, b.handSize());
-        assertEquals("{B7 B8 B9 *B10}", b.getMeld(1));
+        assertEquals("{*B9 B10 B11 B12}", b.getMeld(1));
         assertEquals("{*O9 *O10 O11 O12 O13}", b.getMeld(2));
     }
 
