@@ -85,4 +85,12 @@ public class Board {
     public String getHand() {
         return hand.toString();
     }
+
+    public int winner() {
+        return 0;
+    }
+
+    public int getScore(int player) {
+        return 0;
+    }
 }

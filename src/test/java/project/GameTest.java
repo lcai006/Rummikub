@@ -296,6 +296,29 @@ public class GameTest {
     }
 
     @Test
+    public void testInitialPlay9() {
+        String tiles1 = "R2 B2 G2 O2";
+        String tiles2 = "G3 G4 G5 G6 G7";
+        String tiles3 = "O4 O5 O6 O7 O8";
+        clients.get(0).setInput("new " + tiles1 + System.lineSeparator() + "new " + tiles2 + System.lineSeparator() + "new " + tiles3 + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("");
+        clients.get(2).setInput("");
+        server.reset(tiles1 + " " + tiles2 + " " + tiles3, "", "");
+
+        // waiting for game
+        await().until(() -> clients.get(0).outputSize() > 1);
+
+        // P1 plays {2H 2S 2C 2D} {3C 4C 5C 6C 7C} {4D 5D 6D 7D 8D}
+        String out = clients.get(0).getOutput(1);
+        Board b = new Board(out);
+        assertEquals(0, b.handSize());
+        assertEquals("{*R2 *G2 *B2 *O2}", b.getMeld(0));
+        assertEquals("{*G3 *G4 *G5 *G6 *G7}", b.getMeld(1));
+        assertEquals("{*O4 *O5 *O6 *O7 *O8}", b.getMeld(2));
+        assertEquals(1, b.winner());
+    }
+
+    @Test
     public void testNormalPlay1() {
         String tiles1 = "R11 R12 R13 G2 G3 G4";
         String tiles2 = "B11 B12 B13";
@@ -480,6 +503,34 @@ public class GameTest {
         for (String s: tiles) {
             assertTrue(b.getHand().contains(s));
         }
+    }
+
+    @Test
+    public void testWinner() {
+        String tiles1 = "G2 G2 O2 R3 B3 B3 R5 B6 O7 R9 R10 B11 B12 B13";
+        String tiles2 = "R2 B2 G2 O2 G3 G4 G6 G7 O4 O5 O6 O7 O8 O9";
+        String tiles3 = "R4 O6 O6 B7 R7 G8 R10 R11 R12 R13 B10 B11 B12 B13";
+        clients.get(0).setInput("draw" + System.lineSeparator() + "new G2 O2 R2" + System.lineSeparator() + "new B11 B12 B13" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("draw" + System.lineSeparator() + "new R2 B2 G2 O2" + System.lineSeparator() + "new G3 G4 G5 G6 G7" + System.lineSeparator() + "new O4 O5 O6 O7 O8 O9" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(2).setInput("new R10 R11 R12 R13" + System.lineSeparator() + "new B10 B11 B12 B13" + System.lineSeparator() + "end" + System.lineSeparator());
+        server.reset(tiles1, tiles2, tiles3);
+
+        // waiting for game
+        await().until(() -> clients.get(1).outputSize() > 5);
+
+        String out = clients.get(1).getOutput(5);
+        Board b = new Board(out);
+        assertEquals(0, b.handSize());
+        assertEquals("{R10 R11 R12 R13}", b.getMeld(0));
+        assertEquals("{B10 B11 B12 B13}", b.getMeld(1));
+        assertEquals("{R2 G2 O2}", b.getMeld(2));
+        assertEquals("{*R2 *G2 *B2 *O2}", b.getMeld(3));
+        assertEquals("{*G3 *G4 *G5 *G6 *G7}", b.getMeld(4));
+        assertEquals("{*O4 *O5 *O6 *O7 *O8}", b.getMeld(5));
+        assertEquals(2, b.winner());
+        assertEquals(-48, b.getScore(0));
+        assertEquals(0, b.getScore(1));
+        assertEquals(-38, b.getScore(2));
     }
 
     @Test
