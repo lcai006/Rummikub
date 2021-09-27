@@ -161,10 +161,10 @@ public class ModelTest {
         tiles = "G12 R12 O12 B12";
         table.createMeld(tiles);
         assertEquals("Meld 1: {B11 B12 B13}\nMeld 2: {R12 G12 B12 O12}\n", table.toString());
-        table.removeTile(2, "R12");
+        table.removeTile(1, "R12");
         assertEquals("Meld 1: {B11 B12 B13}\nMeld 2: {G12 B12 O12}\n", table.toString());
 
-        table.addTile(1, "B1 B10");
+        table.addTile(0, "B1 B10");
         assertEquals("Meld 1: {B10 B11 B12 B13 B1}\nMeld 2: {G12 B12 O12}\n", table.toString());
     }
 
