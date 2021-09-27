@@ -68,6 +68,7 @@ public class Game {
                 if (!checkInit(lines)) {
                     return;
                 }
+                isInitPlay.set(currentPlayer, false);
             }
         }
 
