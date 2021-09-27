@@ -17,12 +17,12 @@ public class Table {
         melds.add(m);
     }
 
-    public void addTile(int num, String list) {
-        melds.get(num - 1).add(list);
+    public void addTile(int i, String list) {
+        melds.get(i).add(list);
     }
 
-    public void removeTile(int num, String list) {
-        melds.get(num - 1).remove(list);
+    public void removeTile(int i, String list) {
+        melds.get(i).remove(list);
     }
 
     public String toString() {
