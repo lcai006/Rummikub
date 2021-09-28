@@ -513,7 +513,7 @@ public class GameTest {
         clients.get(0).setInput("draw" + System.lineSeparator() + "new G2 O2 R2" + System.lineSeparator() + "new B11 B12 B13" + System.lineSeparator() + "end" + System.lineSeparator());
         clients.get(1).setInput("draw" + System.lineSeparator() + "new R2 B2 G2 O2" + System.lineSeparator() + "new G3 G4 G5 G6 G7" + System.lineSeparator() + "new O4 O5 O6 O7 O8 O9" + System.lineSeparator() + "end" + System.lineSeparator());
         clients.get(2).setInput("new R10 R11 R12 R13" + System.lineSeparator() + "new B10 B11 B12 B13" + System.lineSeparator() + "end" + System.lineSeparator());
-        server.reset(tiles1, tiles2, tiles3);
+        server.reset(tiles1, tiles2, tiles3, "G5 R2");
 
         // waiting for game
         await().until(() -> clients.get(1).outputSize() > 5);
@@ -524,9 +524,10 @@ public class GameTest {
         assertEquals("{R10 R11 R12 R13}", b.getMeld(0));
         assertEquals("{B10 B11 B12 B13}", b.getMeld(1));
         assertEquals("{R2 G2 O2}", b.getMeld(2));
-        assertEquals("{*R2 *G2 *B2 *O2}", b.getMeld(3));
-        assertEquals("{*G3 *G4 *G5 *G6 *G7}", b.getMeld(4));
-        assertEquals("{*O4 *O5 *O6 *O7 *O8}", b.getMeld(5));
+        assertEquals("{B11 B12 B13}", b.getMeld(3));
+        assertEquals("{*R2 *G2 *B2 *O2}", b.getMeld(4));
+        assertEquals("{*G3 *G4 *G5 *G6 *G7}", b.getMeld(5));
+        assertEquals("{*O4 *O5 *O6 *O7 *O8 *O9}", b.getMeld(6));
         assertEquals(2, b.winner());
         assertEquals(-48, b.getScore(0));
         assertEquals(0, b.getScore(1));
