@@ -138,4 +138,24 @@ public class Hand {
             }
         }
     }
+
+    public int score() {
+        int s = 0;
+        for (Tile tile: red) {
+            s += Math.min(tile.number(), 10);
+        }
+
+        for (Tile tile: green) {
+            s += Math.min(tile.number(), 10);
+        }
+
+        for (Tile tile: blue) {
+            s += Math.min(tile.number(), 10);
+        }
+
+        for (Tile tile: orange) {
+            s += Math.min(tile.number(), 10);
+        }
+        return -s;
+    }
 }

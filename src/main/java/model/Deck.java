@@ -62,4 +62,16 @@ public class Deck {
         return tile;
     }
 
+    // Set rigged tiles in reversed order
+    public void set(String list) {
+        String[] tiles= list.split(" ");
+        for (String t: tiles) {
+            deck.remove(t);
+        }
+
+        for (String t: tiles) {
+            deck.add(0, t);
+        }
+    }
+
 }

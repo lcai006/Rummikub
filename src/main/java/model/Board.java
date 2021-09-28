@@ -8,6 +8,8 @@ public class Board {
     private ArrayList<String> oriMelds;
     private ArrayList<String> melds;
     private StringBuilder hand;
+    private int winner;
+    private ArrayList<Integer> scores;
 
     /**
      * parse outputs text to object attributes for testing
@@ -15,14 +17,16 @@ public class Board {
      */
     public Board(String output) {
         turn = "";
+        winner = -1;
         oriMelds = new ArrayList<>();
         melds = new ArrayList<>();
         hand = new StringBuilder();
+        scores = new ArrayList<>();
 
         String[] lines = output.split("\n");
         String label = "";
         for (String line: lines) {
-            if (turn.equals("")) {
+            if (turn.equals("") && line.length() == 15) {
                 turn = line;
             } else if (line.equals("Table")) {
                 label = "Table";
@@ -30,24 +34,42 @@ public class Board {
             } else if (line.equals("Hand")) {
                 label = "Hand";
                 continue;
+            } else if (line.startsWith("Winner")) {
+                winner = Integer.parseInt(line.substring(line.length() - 1));
+                continue;
+            } else if (line.equals("Scores")) {
+                label = "Scores";
+                continue;
             } else if (line.equals("")) {
                 label = "";
                 continue;
             }
 
-            if (label.equals("Table")) {
-                line = line.split(": ")[1];
-                oriMelds.add(line);
-                line = line.replace("*", "");
-                line = line.replace("!", "");
-                line = line.replace("{", "");
-                line = line.replace("}", "");
-                melds.add(line);
-            } else if (label.equals("Hand")) {
-                if (!hand.isEmpty()) {
-                    hand.append(" ");
+            switch (label) {
+                case "Table" -> {
+                    line = line.split(": ")[1];
+                    oriMelds.add(line);
+                    line = line.replace("*", "");
+                    line = line.replace("!", "");
+                    line = line.replace("{", "");
+                    line = line.replace("}", "");
+                    melds.add(line);
                 }
-                hand.append(line);
+                case "Hand" -> {
+                    if (!hand.isEmpty()) {
+                        hand.append(" ");
+                    }
+                    hand.append(line);
+                }
+                case "Scores" -> {
+                    line = line.replace("P1: ", "");
+                    line = line.replace("P2: ", "");
+                    line = line.replace("P3: ", "");
+                    String[] s = line.split(" ");
+                    scores.add(Integer.parseInt(s[0]));
+                    scores.add(Integer.parseInt(s[1]));
+                    scores.add(Integer.parseInt(s[2]));
+                }
             }
         }
     }
@@ -87,10 +109,10 @@ public class Board {
     }
 
     public int winner() {
-        return 0;
+        return winner;
     }
 
     public int getScore(int player) {
-        return 0;
+        return scores.get(player);
     }
 }

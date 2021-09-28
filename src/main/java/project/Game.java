@@ -3,23 +3,24 @@ package project;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Game {
     private int currentPlayer;
     private Deck deck;
     private Table table;
     private ArrayList<Hand> hands;
-    private boolean isEnd;
+    private int winner;
     private ArrayList<Boolean> isInitPlay;
 
     public Game() {
         reset("", "", "");
-        isEnd = false;
+        winner = -1;
     }
 
     // reset game
     public void reset(String hand1, String hand2, String hand3) {
-        isEnd = false;
+        winner = -1;
         currentPlayer = 0;
         deck = new Deck();
         table = new Table();
@@ -52,11 +53,24 @@ public class Game {
     }
 
     public String getOutput(int player) {
-        return "Player " + (currentPlayer + 1) + "’s turn\n\n" +
-                "Table\n" +
-                table.toString() +
-                "\nHand\n" +
-                hands.get(player).display();
+        StringBuilder output = new StringBuilder();
+        if (!isEnd()) {
+            output.append("Player ").append(currentPlayer + 1).append("’s turn\n\n");
+        }
+        output.append("Table\n").append(table.toString()).append("\nHand\n").append(hands.get(player).display());
+
+        if (isEnd()) {
+            output.append("\n").append(winInfo());
+        }
+
+        return output.toString();
+    }
+
+    public String winInfo() {
+
+        return "Winner: Player " + (winner + 1) + "\n" +
+                "Scores\n" +
+                "P1: " + hands.get(0).score() + " P2: " + hands.get(1).score() + " P3: " + hands.get(2).score() + "\n";
     }
 
     public void action(String act) {
@@ -73,6 +87,7 @@ public class Game {
             }
         }
 
+        System.out.println(Arrays.toString(lines));
         for (String line: lines) {
             if (line.equals("draw")) {
                 draw();
@@ -93,6 +108,10 @@ public class Game {
                 }
 
             }
+        }
+
+        if (hands.get(currentPlayer).size() == 0) {
+            winner = currentPlayer;
         }
 
         if (currentPlayer == 2) {
@@ -137,7 +156,11 @@ public class Game {
         return score >= 30;
     }
 
+    public void setDeck(String tilesToDraw) {
+        deck.set(tilesToDraw);
+    }
+
     public boolean isEnd() {
-        return isEnd;
+        return winner != -1;
     }
 }

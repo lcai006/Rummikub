@@ -47,9 +47,7 @@ public class Server implements Runnable{
         acceptClients();
         sendStartInfo();
 
-        while (test != 0) {
-            startGame();
-        }
+        startGame();
 
         sendFinalMessage();
         // waiting clients' disconnection then close
@@ -80,7 +78,7 @@ public class Server implements Runnable{
             await().until(() -> test == 2);
         }
         // Game logic
-        while (test != 0 || !game.isEnd()) {
+        while (!game.isEnd()) {
             update(game);
             String action;
             try {
@@ -93,6 +91,7 @@ public class Server implements Runnable{
                 break;
             }
         }
+        update(game);
 
     }
 
@@ -126,7 +125,11 @@ public class Server implements Runnable{
         for (int i = 0; i < 3; i++) {
             try {
                 dOut.get(i).writeUTF(game.getOutput(i));
-                dOut.get(i).writeInt(game.getCurrentPlayer());
+                if (game.isEnd()) {
+                    dOut.get(i).writeInt(-1);
+                } else {
+                    dOut.get(i).writeInt(game.getCurrentPlayer());
+                }
                 dOut.get(i).flush();
             } catch (Exception e) {
                 System.out.println("Could not update information");
@@ -190,6 +193,16 @@ public class Server implements Runnable{
      */
     public void reset(String hand1, String hand2, String hand3) {
         game.reset(hand1, hand2, hand3);
+        test = 2;
+    }
+
+    /**
+     * Reset game
+     *
+     */
+    public void reset(String hand1, String hand2, String hand3, String tilesToDraw) {
+        game.reset(hand1, hand2, hand3);
+        game.setDeck(tilesToDraw);
         test = 2;
     }
 
