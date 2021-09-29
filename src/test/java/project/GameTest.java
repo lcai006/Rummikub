@@ -690,6 +690,129 @@ public class GameTest {
         assertEquals(oldHand.toString(), b.getHand());
     }
 
+    @Test
+    public void testVideoSimple3() {
+        String tiles1 = "R11 O11 B11 G11 O4 R4 R8";
+        String tiles2 = "R12 B12 G12";
+        String tiles3 = "R4 G4 B4 R5 R6 R7";
+        clients.get(0).setInput("new R11 O11 B11 G11" + System.lineSeparator() + "end" + System.lineSeparator() + "add 3 O4" + System.lineSeparator() + "add 4 R4 R8" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("new R12 B12 G12" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(2).setInput("new R4 G4 B4" + System.lineSeparator() + "new R5 R6 R7" + System.lineSeparator() + "end" + System.lineSeparator());
+        server.reset(tiles1, tiles2, tiles3);
+
+        // waiting for game
+        await().until(() -> clients.get(0).outputSize() > 4);
+        String out = clients.get(0).getOutput(0);
+        Board b = new Board(out);
+        Hand oldHand = new Hand(b.getHand());
+        oldHand.play(tiles1);
+
+        out = clients.get(0).getOutput(4);
+        b = new Board(out);
+        assertEquals(7, b.handSize());
+        assertEquals("{R11 G11 B11 O11}", b.getMeld(0));
+        assertEquals("{R12 G12 B12}", b.getMeld(1));
+        assertEquals("{R4 G4 B4 *O4}", b.getMeld(2));
+        assertEquals("{*R4 R5 R6 R7 *R8}", b.getMeld(3));
+        assertEquals(oldHand.toString(), b.getHand());
+    }
+
+    @Test
+    public void testVideoSimple1() {
+        String tiles1 = "R11 O11 B11 G1 B12 B13";
+        String tiles2 = "G11 G12 G13";
+        String tiles3 = "R4 G4 B4 R5 R6 R7";
+        clients.get(0).setInput("new R11 O11 B11" + System.lineSeparator() + "end" + System.lineSeparator()
+                + "reuse 2 G11" + System.lineSeparator() + "add 1 G11" + System.lineSeparator() + "add 2 G1" + System.lineSeparator()
+                + "reuse 1 B11" + System.lineSeparator() + "new B11 B12 B13" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("new G11 G12 G13" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(2).setInput("new R4 G4 B4" + System.lineSeparator() + "new R5 R6 R7" + System.lineSeparator() + "end" + System.lineSeparator());
+        server.reset(tiles1, tiles2, tiles3);
+
+        // waiting for game
+        await().until(() -> clients.get(0).outputSize() > 4);
+        String out = clients.get(0).getOutput(0);
+        Board b = new Board(out);
+        Hand oldHand = new Hand(b.getHand());
+        oldHand.play(tiles1);
+
+        out = clients.get(0).getOutput(4);
+        b = new Board(out);
+        assertEquals(8, b.handSize());
+        assertEquals("{R11 !G11 O11}", b.getMeld(0));
+        assertEquals("{G12 G13 *G1}", b.getMeld(1));
+        assertEquals("{R4 G4 B4}", b.getMeld(2));
+        assertEquals("{R5 R6 R7}", b.getMeld(3));
+        assertEquals("{!B11 *B12 *B13}", b.getMeld(4));
+        assertEquals(oldHand.toString(), b.getHand());
+    }
+
+    @Test
+    public void testVideoSimple2() {
+        String tiles1 = "O11 B11 G11 G10 B10 R13";
+        String tiles2 = "O12 B12 G12";
+        String tiles3 = "R7 R8 R9 R10 R11 R12";
+        clients.get(0).setInput("new O11 B11 G11" + System.lineSeparator() + "end" + System.lineSeparator()
+                + "add 3 R13" + System.lineSeparator() + "reuse 3 R10" + System.lineSeparator()
+                + "new R10 G10 B10" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(1).setInput("new O12 B12 G12" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(2).setInput("new R7 R8 R9 R10 R11 R12" + System.lineSeparator() + "end" + System.lineSeparator());
+        server.reset(tiles1, tiles2, tiles3);
+
+        // waiting for game
+        await().until(() -> clients.get(0).outputSize() > 4);
+        String out = clients.get(0).getOutput(0);
+        Board b = new Board(out);
+        Hand oldHand = new Hand(b.getHand());
+        oldHand.play(tiles1);
+
+        out = clients.get(0).getOutput(4);
+        b = new Board(out);
+        assertEquals(8, b.handSize());
+        assertEquals("{G11 B11 O11}", b.getMeld(0));
+        assertEquals("{G12 B12 O12}", b.getMeld(1));
+        assertEquals("{R7 R8 R9}", b.getMeld(2));
+        assertEquals("{!R10 *G10 *B10}", b.getMeld(3));
+        assertEquals("{R11 R12 *R13}", b.getMeld(4));
+        assertEquals(oldHand.toString(), b.getHand());
+    }
+
+    @Test
+    public void testVideoComplex() {
+        String tiles1 = "R11 B11 G11 R3 R4 R5 B1 B2 B3 B4 G4 B4 O5 O13";
+        String tiles2 = "O1 O2 O3 O4 R3 O3 B3 G3 G3 G4 G5";
+        String tiles3 = "";
+        clients.get(0).setInput("new R11 B11 G11" + System.lineSeparator() + "new R3 R4 R5" + System.lineSeparator() + "new B1 B2 B3 B4" + System.lineSeparator() + "end" + System.lineSeparator()
+                + "reuse 1 R3 R4 R5" + System.lineSeparator() + "new R4 G4 B4" + System.lineSeparator()
+                + "reuse 5 G3 G4 G5" + System.lineSeparator() + "new R5 G5 O5" + System.lineSeparator()
+                + "reuse 2 B4" + System.lineSeparator()+ "reuse 3 O4" + System.lineSeparator() + "new G4 B4 O4" + System.lineSeparator() + "add 2 O13" + System.lineSeparator()
+                + "reuse 4 O3" + System.lineSeparator()+ "new R3 G3 O3" + System.lineSeparator() + "end" + System.lineSeparator());
+
+        clients.get(1).setInput("new O1 O2 O3 O4" + System.lineSeparator() + "new R3 O3 B3 G3" + System.lineSeparator() + "new G3 G4 G5" + System.lineSeparator() + "end" + System.lineSeparator());
+        clients.get(2).setInput("draw" + System.lineSeparator());
+        server.reset(tiles1, tiles2, tiles3);
+
+        // waiting for game
+        await().until(() -> clients.get(0).outputSize() > 4);
+        String out = clients.get(0).getOutput(0);
+        Board b = new Board(out);
+        Hand oldHand = new Hand(b.getHand());
+        oldHand.play(tiles1);
+
+        out = clients.get(0).getOutput(4);
+        b = new Board(out);
+        assertEquals(0, b.handSize());
+        assertEquals("{R11 G11 B11}", b.getMeld(0));
+        assertEquals("{B1 B2 B3}", b.getMeld(1));
+        assertEquals("{*O13 O1 O2 O3}", b.getMeld(2));
+        assertEquals("{R3 G3 B3}", b.getMeld(3));
+        assertEquals("{!R4 *G4 *B4}", b.getMeld(4));
+        assertEquals("{!R5 !G5 *O5}", b.getMeld(5));
+        assertEquals("{!G4 !B4 !O4}", b.getMeld(6));
+        assertEquals("{!R3 !G3 !O3}", b.getMeld(7));
+        assertEquals(oldHand.toString(), b.getHand());
+    }
+
     @AfterEach
     public void close() throws IOException {
         server.close();
