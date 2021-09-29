@@ -783,10 +783,10 @@ public class GameTest {
         String tiles2 = "O1 O2 O3 O4 R3 O3 B3 G3 G3 G4 G5";
         String tiles3 = "";
         clients.get(0).setInput("new R11 B11 G11" + System.lineSeparator() + "new R3 R4 R5" + System.lineSeparator() + "new B1 B2 B3 B4" + System.lineSeparator() + "end" + System.lineSeparator()
-                + "reuse 1 R3 R4 R5" + System.lineSeparator() + "new R4 G4 B4" + System.lineSeparator()
-                + "reuse 5 G3 G4 G5" + System.lineSeparator() + "new R5 G5 O5" + System.lineSeparator()
-                + "reuse 2 B4" + System.lineSeparator()+ "reuse 3 O4" + System.lineSeparator() + "new G4 B4 O4" + System.lineSeparator() + "add 2 O13" + System.lineSeparator()
-                + "reuse 4 O3" + System.lineSeparator()+ "new R3 G3 O3" + System.lineSeparator() + "end" + System.lineSeparator());
+                + "reuse 2 R3 R4 R5" + System.lineSeparator() + "new R4 G4 B4" + System.lineSeparator()
+                + "reuse 6 G3 G4 G5" + System.lineSeparator() + "new R5 G5 O5" + System.lineSeparator()
+                + "reuse 3 B4" + System.lineSeparator()+ "reuse 4 O4" + System.lineSeparator() + "new G4 B4 O4" + System.lineSeparator() + "add 4 O13" + System.lineSeparator()
+                + "reuse 5 O3" + System.lineSeparator()+ "new R3 G3 O3" + System.lineSeparator() + "end" + System.lineSeparator());
 
         clients.get(1).setInput("new O1 O2 O3 O4" + System.lineSeparator() + "new R3 O3 B3 G3" + System.lineSeparator() + "new G3 G4 G5" + System.lineSeparator() + "end" + System.lineSeparator());
         clients.get(2).setInput("draw" + System.lineSeparator());
