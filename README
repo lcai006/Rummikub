@@ -1,6 +1,8 @@
 It is possible that the testing program stucks by race condition, Please rerun the test suite if it happens.
-Instruction to play:
-Draw a tile: draw
+Instruction to play
+Draw a tile: 
+draw
+
 Add a new meld: 
 new R1 R2 R3
 
