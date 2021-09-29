@@ -1,0 +1,17 @@
+It is possible that the testing program stucks by race condition, Please rerun the test suite if it happens.
+Instruction to play:
+Draw a tile: draw
+Add a new meld: 
+new R1 R2 R3
+
+Add a tile to a meld on the table: 
+add 1 R1 R2
+
+Reuse a tile from a meld on the table:
+reuse 1 R1
+
+end is added to the end of all players' actions:
+new R1 R2 R3
+add 1 G13
+new B1 B2 B3
+end
