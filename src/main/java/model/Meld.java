@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class Meld {
     private String type;
@@ -41,9 +42,13 @@ public class Meld {
         meld.sort(Comparator.comparingInt(Tile::number));
 
         if (meld.get(0).number() == 1 && meld.get(meld.size() - 1).number() == 13 && meld.size() < 13) {
-            Tile t = meld.get(0);
-            meld.remove(0);
-            meld.add(t);
+            int current = 0;
+            while (meld.get(0).number() == current + 1) {
+                current = meld.get(0).number();
+                Tile t = meld.get(0);
+                meld.remove(0);
+                meld.add(t);
+            }
         }
     }
 
@@ -85,7 +90,7 @@ public class Meld {
         return str.toString();
     }
 
-    // Validates if the add action is valid
+    // Validates the meld
     public boolean invalid(String list) {
         String[] tiles = list.split("\\s+");
 
@@ -112,6 +117,7 @@ public class Meld {
             if (tiles.length + meld.size() > 13) {
                 return true;
             }
+
             ArrayList<Integer> numList = new ArrayList<>();
             for (Tile t: meld) {
                 numList.add(t.number());
@@ -174,8 +180,9 @@ public class Meld {
     }
 
     public void newHighLight(String tiles) {
+        ArrayList<String> list = new ArrayList<>(List.of(tiles.split(" ")));
         for (Tile t: meld) {
-            if (tiles.contains(t.value())) {
+            if (list.contains(t.value())) {
                 t.newHighlight();
             }
         }
@@ -193,6 +200,20 @@ public class Meld {
         for (Tile t: meld) {
             t.removeHighlight();
         }
+    }
+
+    public String newTiles () {
+        StringBuilder str = new StringBuilder();
+        for (Tile tile: meld) {
+            if (str.length() > 1) {
+                str.append(" ");
+            }
+            if (tile.isNew()) {
+                str.append(tile.value());
+            }
+        }
+
+        return str.toString();
     }
 
     // Calculate score for a meld

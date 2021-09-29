@@ -66,6 +66,7 @@ public class Table {
             }
             if (m.type().equals("run") && m.invalid("")) {
                 // Split run
+                String newTiles = m.newTiles();
                 m.removeHighlight();
                 String list = m.toString();
                 list = list.replace("{", "");
@@ -97,6 +98,7 @@ public class Table {
                     if (i != 0) {
                         m.remove(newMelds.get(i));
                         createMeld(newMelds.get(i));
+                        newHighLight(size() - 1, newTiles);
                     }
                 }
             }

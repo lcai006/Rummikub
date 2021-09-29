@@ -72,4 +72,8 @@ public class Tile {
             return false;
         return (this.toString().equals(obj.toString()));
     }
+
+    public boolean isNew() {
+        return newHighlighted;
+    }
 }
