@@ -28,7 +28,7 @@ public class GameTest {
             Thread thread = new Thread(c);
             thread.start();
             // make sure index matches player id
-            Thread.sleep(10);
+            Thread.sleep(50);
         }
     }
 
