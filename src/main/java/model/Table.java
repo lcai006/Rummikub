@@ -58,4 +58,48 @@ public class Table {
         return melds.size();
     }
 
+    public void checkMelds() {
+        for (Meld m: new ArrayList<>(melds)) {
+            if (m.size() == 0) {
+                melds.remove(m);
+                continue;
+            }
+            if (m.type().equals("run") && m.invalid("")) {
+                // Split run
+                m.removeHighlight();
+                String list = m.toString();
+                list = list.replace("{", "");
+                list = list.replace("}", "");
+                ArrayList<String> newMelds = new ArrayList<>();
+                StringBuilder tiles = new StringBuilder();
+                int num = 0;
+                for (String tile: list.split(" ")) {
+                    Tile t = new Tile(tile);
+                    if (num == 0) {
+                        num = t.number();
+                        if (!tiles.isEmpty())
+                            tiles.append(" ");
+                        tiles.append(t.value());
+                    } else if (num != t.number() - 1 && num != 13) {
+                        newMelds.add(tiles.toString());
+                        tiles.setLength(0);
+                        tiles.append(t.value());
+                        num = t.number();
+                    } else {
+                        if (!tiles.isEmpty())
+                            tiles.append(" ");
+                        tiles.append(t.value());
+                        num = t.number();
+                    }
+                }
+                newMelds.add(tiles.toString());
+                for (int i = 0; i < newMelds.size(); i++) {
+                    if (i != 0) {
+                        m.remove(newMelds.get(i));
+                        createMeld(newMelds.get(i));
+                    }
+                }
+            }
+        }
+    }
 }

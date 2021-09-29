@@ -52,14 +52,19 @@ public class Tile {
 
     public String toString() {
         String text;
-        if (newHighlighted)
-            text = "*" + str;
-        else if (moveHighlighted)
+        if (moveHighlighted)
             text = "!" + str;
+        else if (newHighlighted)
+            text = "*" + str;
         else
             text = str;
 
         return text;
+    }
+
+    // Value without highlight
+    public String value() {
+        return str;
     }
 
     public boolean equals(Object obj) {

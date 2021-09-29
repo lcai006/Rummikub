@@ -48,7 +48,7 @@ public class Meld {
     }
 
     public void add(String list) {
-        if (!validate(list)) {
+        if (invalid(list)) {
             return;
         }
 
@@ -86,13 +86,13 @@ public class Meld {
     }
 
     // Validates if the add action is valid
-    public boolean validate(String list) {
+    public boolean invalid(String list) {
         String[] tiles = list.split("\\s+");
 
         if (type.equals("set")) {
             // size of a set is 3 or 4
             if (tiles.length + meld.size() > 4) {
-                return false;
+                return true;
             }
             ArrayList<String> colorList = new ArrayList<>();
             for (Tile t: meld) {
@@ -101,27 +101,30 @@ public class Meld {
             for (String tile: tiles) {
                 Tile t = new Tile(tile);
                 if (t.number() != meld.get(0).number()) {
-                    return false;
+                    return true;
                 }
                 if (colorList.contains(t.color())) {
-                    return false;
+                    return true;
                 }
             }
         } else {
             // size of a run is between 3 and 13
             if (tiles.length + meld.size() > 13) {
-                return false;
+                return true;
             }
             ArrayList<Integer> numList = new ArrayList<>();
             for (Tile t: meld) {
                 numList.add(t.number());
             }
-            for (String tile: tiles) {
-                Tile t = new Tile(tile);
-                if (!t.color().equals(meld.get(0).color())) {
-                    return false;
+
+            if (!list.isEmpty()) {
+                for (String tile : tiles) {
+                    Tile t = new Tile(tile);
+                    if (!t.color().equals(meld.get(0).color())) {
+                        return true;
+                    }
+                    numList.add(t.number());
                 }
-                numList.add(t.number());
             }
 
             // Checks if the sequence is valid
@@ -145,7 +148,7 @@ public class Meld {
                     } else if (current + 1 == num) {
                         current = num;
                     } else {
-                        return false;
+                        return true;
                     }
                 }
             } else {
@@ -155,13 +158,13 @@ public class Meld {
                     } else if (current + 1 == num) {
                         current = num;
                     } else {
-                        return false;
+                        return true;
                     }
                 }
             }
         }
 
-        return true;
+        return false;
     }
 
     public void newHighLight() {
@@ -172,7 +175,7 @@ public class Meld {
 
     public void newHighLight(String tiles) {
         for (Tile t: meld) {
-            if (tiles.contains(t.toString())) {
+            if (tiles.contains(t.value())) {
                 t.newHighlight();
             }
         }
@@ -180,7 +183,7 @@ public class Meld {
 
     public void moveHighLight(String tiles) {
         for (Tile t: meld) {
-            if (tiles.contains(t.toString())) {
+            if (tiles.contains(t.value())) {
                 t.moveHighlight();
             }
         }

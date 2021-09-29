@@ -12,6 +12,7 @@ public class Game {
     private ArrayList<Hand> hands;
     private int winner;
     private ArrayList<Boolean> isInitPlay;
+    private ArrayList<String> tempTiles;
 
     public Game() {
         reset("", "", "");
@@ -32,6 +33,7 @@ public class Game {
         h = new Hand(listToString(deck.createHand(hand3)));
         hands.add(h);
         isInitPlay = new ArrayList<>();
+        tempTiles = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             isInitPlay.add(true);
         }
@@ -87,28 +89,42 @@ public class Game {
             }
         }
 
-        System.out.println(Arrays.toString(lines));
         for (String line: lines) {
             if (line.equals("draw")) {
                 draw();
             } else {
                 String[] str = line.split(" ", 3);
-                if (str[0].equals("new")) {
-                    String tiles = line.substring(4);
-                    newMeld(tiles);
-                } else if (str[0].equals("add")){
-                    int num = Integer.parseInt(str[1]);
-                    String tiles;
-                    if (Integer.parseInt(str[1]) < 10) {
-                        tiles = line.substring(6);
-                    } else {
-                        tiles = line.substring(7);
+                switch (str[0]) {
+                    case "new" -> {
+                        String tiles = line.substring(4);
+                        newMeld(tiles);
                     }
-                    addToMeld(num - 1, tiles);
-                }
+                    case "add" -> {
+                        int num = Integer.parseInt(str[1]);
+                        String tiles;
+                        if (Integer.parseInt(str[1]) < 10) {
+                            tiles = line.substring(6);
+                        } else {
+                            tiles = line.substring(7);
+                        }
+                        addToMeld(num - 1, tiles);
+                    }
+                    case "reuse" -> {
+                        int num = Integer.parseInt(str[1]);
+                        String tiles;
+                        if (Integer.parseInt(str[1]) < 10) {
+                            tiles = line.substring(8);
+                        } else {
+                            tiles = line.substring(9);
+                        }
 
+                        reuseTiles(num - 1, tiles);
+                    }
+                }
             }
         }
+
+        table.checkMelds();
 
         if (hands.get(currentPlayer).size() == 0) {
             winner = currentPlayer;
@@ -131,14 +147,34 @@ public class Game {
     public void newMeld(String tiles) {
         table.createMeld(tiles);
         table.newHighLight(table.size() - 1);
-        hands.get(currentPlayer).play(tiles);
+        Hand h = new Hand(tiles);
+        for (String t: tiles.split(" ")) {
+            if (tempTiles.contains(t)) {
+                tempTiles.remove(t);
+                table.moveHighLight(table.size() - 1, t);
+                h.play(t);
+            }
+        }
+        if (!h.toString().isEmpty()) {
+            hands.get(currentPlayer).play(h.toString());
+        }
     }
 
     // current player plays a new meld
     public void addToMeld(int i, String tiles) {
         table.addTile(i, tiles);
         table.newHighLight(i, tiles);
-        hands.get(currentPlayer).play(tiles);
+        Hand h = new Hand(tiles);
+        for (String t: tiles.split(" ")) {
+            if (tempTiles.contains(t)) {
+                tempTiles.remove(t);
+                table.moveHighLight(i, t);
+                h.play(t);
+            }
+        }
+        if (!h.toString().isEmpty()) {
+            hands.get(currentPlayer).play(h.toString());
+        }
     }
 
     // check initial play with at least 30 points
@@ -154,6 +190,13 @@ public class Game {
         }
 
         return score >= 30;
+    }
+
+    public void reuseTiles(int i, String tiles) {
+        for (String t: tiles.split(" ")) {
+            tempTiles.add(t);
+            table.removeTile(i, t);
+        }
     }
 
     public void setDeck(String tilesToDraw) {
