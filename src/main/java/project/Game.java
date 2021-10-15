@@ -206,4 +206,12 @@ public class Game {
     public boolean isEnd() {
         return winner != -1;
     }
+
+    public Hand getHand(int i) {
+        return hands.get(i);
+    }
+
+    public Table getTable() {
+        return table;
+    }
 }
