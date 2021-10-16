@@ -3,7 +3,6 @@ package project;
 import model.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Game {
     private int currentPlayer;
@@ -13,6 +12,7 @@ public class Game {
     private int winner;
     private ArrayList<Boolean> isInitPlay;
     private ArrayList<String> tempTiles;
+    private String err;
 
     public Game() {
         reset("", "", "");
@@ -76,13 +76,16 @@ public class Game {
     }
 
     public void action(String act) {
+        err = "";
         table.removeHighlight();
         String[] lines = act.split("\n");
 
         if (isInitPlay.get(currentPlayer)) {
             if (lines[0].length() > 4) {
                 if (!checkInit(lines)) {
-                    System.out.println("Need 30 points for initial play");
+                    penalty();
+                    err = "Need 30 points for initial play";
+                    nextPlayer();
                     return;
                 }
                 isInitPlay.set(currentPlayer, false);
@@ -90,10 +93,49 @@ public class Game {
         }
 
         for (String line: lines) {
+            String[] str = line.split("\\s+", 3);
+            switch (str[0]) {
+                case "new" -> {
+                    String tiles = line.substring(4);
+                    if (notInHand(tiles) || !checkMeld(tiles)) {
+                        penalty();
+                        nextPlayer();
+                        return;
+                    }
+                }
+                case "add" -> {
+                    int num = Integer.parseInt(str[1]);
+                    String tiles;
+                    if (Integer.parseInt(str[1]) < 10) {
+                        tiles = line.substring(6);
+                    } else {
+                        tiles = line.substring(7);
+                    }
+                    Meld m = table.getMeld(num - 1);
+                    m.add(tiles);
+                    if (notInHand(tiles) || m.invalid("")) {
+                        penalty();
+                        nextPlayer();
+                        return;
+                    }
+                }
+                case "reuse" -> {
+                    int num = Integer.parseInt(str[1]);
+                    String tiles;
+                    if (Integer.parseInt(str[1]) < 10) {
+                        tiles = line.substring(8);
+                    } else {
+                        tiles = line.substring(9);
+                    }
+                }
+            }
+        }
+
+        for (String line: lines) {
             if (line.equals("draw")) {
                 draw();
             } else {
-                String[] str = line.split(" ", 3);
+                String[] str = line.split("\\s+", 3);
                 switch (str[0]) {
                     case "new" -> {
                         String tiles = line.substring(4);
@@ -130,11 +172,7 @@ public class Game {
             winner = currentPlayer;
         }
 
-        if (currentPlayer == 2) {
-            currentPlayer = 0;
-        } else {
-            currentPlayer++;
-        }
+        nextPlayer();
     }
 
     // current player draws a tile
@@ -148,7 +186,7 @@ public class Game {
         table.createMeld(tiles);
         table.newHighLight(table.size() - 1);
         Hand h = new Hand(tiles);
-        for (String t: tiles.split(" ")) {
+        for (String t: tiles.split("\\s+")) {
             if (tempTiles.contains(t)) {
                 tempTiles.remove(t);
                 table.moveHighLight(table.size() - 1, t);
@@ -160,12 +198,12 @@ public class Game {
         }
     }
 
-    // current player plays a new meld
+    // current player add tiles to a meld
     public void addToMeld(int i, String tiles) {
         table.addTile(i, tiles);
         table.newHighLight(i, tiles);
         Hand h = new Hand(tiles);
-        for (String t: tiles.split(" ")) {
+        for (String t: tiles.split("\\s+")) {
             if (tempTiles.contains(t)) {
                 tempTiles.remove(t);
                 table.moveHighLight(i, t);
@@ -181,15 +219,27 @@ public class Game {
     public boolean checkInit(String[] lines) {
         int score = 0;
         for (String line: lines) {
-            String[] str = line.split(" ", 2);
+            String[] str = line.split("\\s+", 2);
             if (str[0].equals("new")) {
                 String tiles = line.substring(4);
                 Meld m = new Meld(tiles);
                 score += m.score();
+            } else if (str[0].equals("add") || str[0].equals("reuse")) {
+                if (score < 30)
+                    return false;
             }
         }
 
         return score >= 30;
+    }
+
+    // change to next player
+    public void nextPlayer() {
+        if (currentPlayer == 2) {
+            currentPlayer = 0;
+        } else {
+            currentPlayer++;
+        }
     }
 
     public void reuseTiles(int i, String tiles) {
@@ -213,5 +263,34 @@ public class Game {
 
     public Table getTable() {
         return table;
+    }
+
+    public void penalty() {
+        err = "Invalid Move, Player " + (currentPlayer+1) + " draws 3 tiles";
+        for (int i = 0; i < 3; i++) {
+            draw();
+        }
+    }
+
+    public String getError() {
+        return err;
+    }
+
+    // Check if tiles are in hand
+    public boolean notInHand(String tiles) {
+        Hand h = hands.get(currentPlayer);
+        for (String tile: tiles.split("\\s+")) {
+            if (!h.toString().contains(tile)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Check if tiles are in hand
+    public boolean checkMeld(String tiles) {
+        Meld m = new Meld(tiles);
+        return !m.invalid("");
     }
 }

@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class Table {
-    private ArrayList<Meld> melds;
+    private final ArrayList<Meld> melds;
     public Table() {
         melds = new ArrayList<>();
     }
@@ -15,6 +15,10 @@ public class Table {
     public void createMeld(String list) {
         Meld m = new Meld(list);
         melds.add(m);
+    }
+
+    public Meld getMeld(int i) {
+        return melds.get(i);
     }
 
     public void addTile(int i, String list) {

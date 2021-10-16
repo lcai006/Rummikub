@@ -19,10 +19,22 @@ public class Meld {
                 meld.add(t);
             }
 
-            if (meld.get(0).number() == meld.get(1).number()) {
-                type = "set";
-            } else {
-                type = "run";
+            int num = 0;
+            String color = "";
+            for (Tile t: meld) {
+                if (num == 0) {
+                    num = t.number();
+                    color = t.color();
+                    continue;
+                }
+
+                if (t.number() == num && (type == null || type.equals("set"))) {
+                    type = "set";
+                } else if (t.color().equals(color) && (type == null || type.equals("run"))) {
+                    type = "run";
+                } else {
+                    type = "invalid";
+                }
             }
 
             sort();
@@ -94,80 +106,100 @@ public class Meld {
     public boolean invalid(String list) {
         String[] tiles = list.split("\\s+");
 
-        if (type.equals("set")) {
-            // size of a set is 3 or 4
-            if (tiles.length + meld.size() > 4) {
+        switch (type) {
+            case "invalid":
                 return true;
-            }
-            ArrayList<String> colorList = new ArrayList<>();
-            for (Tile t: meld) {
-                colorList.add(t.color());
-            }
-            for (String tile: tiles) {
-                Tile t = new Tile(tile);
-                if (t.number() != meld.get(0).number()) {
-                    return true;
-                }
-                if (colorList.contains(t.color())) {
-                    return true;
-                }
-            }
-        } else {
-            // size of a run is between 3 and 13
-            if (tiles.length + meld.size() > 13) {
-                return true;
-            }
-
-            ArrayList<Integer> numList = new ArrayList<>();
-            for (Tile t: meld) {
-                numList.add(t.number());
-            }
-
-            if (!list.isEmpty()) {
-                for (String tile : tiles) {
-                    Tile t = new Tile(tile);
-                    if (!t.color().equals(meld.get(0).color())) {
+            case "set":
+                // size of a set is 3 or 4
+                if (!list.isEmpty()) {
+                    if (tiles.length + meld.size() > 4)
                         return true;
+                } else {
+                    if (meld.size() > 4)
+                        return true;
+                }
+                ArrayList<String> colorList = new ArrayList<>();
+                int num = 0;
+                for (Tile t : meld) {
+                    if (colorList.contains(t.color()))
+                        return true;
+                    if (num == 0)
+                        num = t.number();
+                    else if (num != t.number())
+                        return true;
+
+                    colorList.add(t.color());
+                }
+
+                if (!list.isEmpty()) {
+                    for (String tile : tiles) {
+                        Tile t = new Tile(tile);
+                        if (t.number() != meld.get(0).number()) {
+                            return true;
+                        }
+                        if (colorList.contains(t.color())) {
+                            return true;
+                        }
                     }
+                }
+                break;
+            case "run":
+                // size of a run is between 3 and 13
+                if (tiles.length + meld.size() > 13) {
+                    return true;
+                }
+
+                ArrayList<Integer> numList = new ArrayList<>();
+                for (Tile t : meld) {
                     numList.add(t.number());
                 }
-            }
 
-            // Checks if the sequence is valid
-            numList.sort(null);
-            int current = 0;
-            if (numList.contains(1) && numList.contains(13) && numList.size() < 13) {
-                for (int i = 0; i < numList.size(); i++) {
-                    if (current == 0) {
-                        current = numList.get(i);
-                        numList.set(i, current+13);
-                    } else if (current + 1 == numList.get(i)) {
-                        current = numList.get(i);
-                        numList.set(i, current+13);
+                if (!list.isEmpty()) {
+                    for (String tile : tiles) {
+                        Tile t = new Tile(tile);
+                        if (!t.color().equals(meld.get(0).color())) {
+                            return true;
+                        }
+                        numList.add(t.number());
                     }
                 }
+
+                // Checks if the sequence is valid
                 numList.sort(null);
-                current = 0;
-                for (int num: numList) {
-                    if (current == 0) {
-                        current = num;
-                    } else if (current + 1 == num) {
-                        current = num;
-                    } else {
-                        return true;
+                int current = 0;
+                if (numList.contains(1) && numList.contains(13) && numList.size() < 13) {
+                    for (int i = 0; i < numList.size(); i++) {
+                        if (current == 0) {
+                            current = numList.get(i);
+                            numList.set(i, current + 13);
+                        } else if (current + 1 == numList.get(i)) {
+                            current = numList.get(i);
+                            numList.set(i, current + 13);
+                        }
+                    }
+                    numList.sort(null);
+                    current = 0;
+                    for (int number : numList) {
+                        if (current == 0) {
+                            current = number;
+                        } else if (current + 1 ==  number) {
+                            current = number;
+                        } else {
+                            return true;
+                        }
+                    }
+                } else {
+                    for (int number : numList) {
+                        if (current == 0) {
+                            current = number;
+                        } else if (current + 1 == number) {
+                            current = number;
+                        } else {
+                            return true;
+                        }
                     }
                 }
-            } else {
-                for (int num: numList) {
-                    if (current == 0) {
-                        current = num;
-                    } else if (current + 1 == num) {
-                        current = num;
-                    } else {
-                        return true;
-                    }
-                }
-            }
+                break;
         }
 
         return false;
