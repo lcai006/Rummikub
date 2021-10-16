@@ -1,7 +1,5 @@
 package project;
 
-import java.io.ByteArrayInputStream;
-
 import io.cucumber.java8.En;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
