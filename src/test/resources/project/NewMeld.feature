@@ -1,6 +1,6 @@
 Feature: Test features for players' basic play with playing new melds.
   Initial melds should have at least 30 points
-  Scenario Outline: Player 1 plays <meld> with at least 30 points for initial hand
+  Scenario Outline: Player 1 plays tiles with at least 30 points for initial hand
     Given Player 1 has tiles: <tiles>
     And Players start the game
     When Player 1 plays <melds>
