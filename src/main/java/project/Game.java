@@ -112,8 +112,7 @@ public class Game {
                         tiles = line.substring(7);
                     }
                     Meld m = table.getMeld(num - 1);
-                    m.add(tiles);
-                    if (notInHand(tiles) || m.invalid("")) {
+                    if (notInHand(tiles) || m.invalid(tiles)) {
                         penalty();
                         nextPlayer();
                         return;

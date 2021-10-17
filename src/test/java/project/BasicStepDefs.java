@@ -44,7 +44,7 @@ public class BasicStepDefs implements En {
         Then("^Player receives an error message$", () ->
             assertEquals("Error found, try again", game.error()));
 
-        Given("^Player (\\d+) has tiles: (.*+)$", (Integer arg0, String tiles) -> {
+        Given("^Player (\\d+) has tiles: (.+)$", (Integer arg0, String tiles) -> {
             switch (arg0) {
                 case 1:
                     tile1 = tiles;
@@ -55,14 +55,14 @@ public class BasicStepDefs implements En {
             }
         });
 
-        When("^Player (\\d+) plays (.*+)$", (Integer arg0, String melds) -> {
+        When("^Player (\\d+) plays (.+)$", (Integer arg0, String melds) -> {
             for(String meld: melds.split(",")) {
                 inString.append("new ").append(meld).append(System.lineSeparator());
             }
             inString.append("end").append(System.lineSeparator());
         });
 
-        Then("^Table has melds (.*+)$", (String melds) -> {
+        Then("^Table has melds (.+)$", (String melds) -> {
             for(String meld: melds.split(",")) {
                 assertTrue(game.getTable().toString().contains(meld));
             }
@@ -72,5 +72,9 @@ public class BasicStepDefs implements En {
 
         Then("^Player (\\d+) receives an penalty for invalid initial play$", (Integer arg0) -> assertEquals("Need 30 points for initial play", game.error()));
 
+        When("^Player (\\d+) adds (.+) to meld (\\d+)$", (Integer arg0, String tiles, Integer meldId) -> {
+            inString.append("add ").append(meldId).append(" ").append(tiles).append(System.lineSeparator());
+            inString.append("end").append(System.lineSeparator());
+        });
     }
 }
