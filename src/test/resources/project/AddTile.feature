@@ -2,10 +2,10 @@ Feature: Test features for adding tiles from hand to melds in the table
   Scenario Outline: Player 1 adds tiles from hand to a meld in the table
     Given Player 1 has tiles: <preset1>
     And Player 2 has tiles: <preset2>
+    And Players start the game
     And Player 1 plays <melds1>
     And Player 2 plays <melds2>
     And Player 3 draws a tile
-    And Players start the game
     When Player 1 adds <tiles> to meld 2
     Then Game shows result
     And Player 1 has <number> tiles
@@ -29,10 +29,10 @@ Feature: Test features for adding tiles from hand to melds in the table
   Scenario: Player 1 adds a tile which is not in hand to a meld
     Given Player 1 has tiles: R10 R11 R12
     And Player 2 has tiles: B10 B11 B12
+    And Players start the game
     And Player 1 plays R10 R11 R12
     And Player 2 plays B10 B11 B12
     And Player 3 draws a tile
-    And Players start the game
     When Player 1 adds B9 to meld 2
     Then Game shows result
     And Player 1 receives an penalty for invalid move
@@ -40,10 +40,10 @@ Feature: Test features for adding tiles from hand to melds in the table
 
   Scenario Outline: Player 1 add tiles to a meld but that meld becomes invalid
     Given Player 1 has tiles: <preset>
+    And Players start the game
     And Player 1 plays <melds>
     And Player 2 draws a tile
     And Player 3 draws a tile
-    And Players start the game
     When Player 1 adds <tiles> to meld 1
     Then Game shows result
     And Player 1 receives an penalty for invalid move
