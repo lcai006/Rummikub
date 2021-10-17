@@ -8,12 +8,14 @@ public class Hand {
     private final ArrayList<Tile> green;
     private final ArrayList<Tile> blue;
     private final ArrayList<Tile> orange;
+    private final ArrayList<Tile> joker;
 
     public Hand(String str) {
         red = new ArrayList<>();
         green = new ArrayList<>();
         blue = new ArrayList<>();
         orange = new ArrayList<>();
+        joker = new ArrayList<>();
 
         // create tiles from the string
         String[] tiles = str.split("\\s+");
@@ -24,6 +26,7 @@ public class Hand {
                 case "G" -> green.add(t);
                 case "B" -> blue.add(t);
                 case "O" -> orange.add(t);
+                case "Joker" -> joker.add(t);
             }
         }
 
@@ -40,7 +43,7 @@ public class Hand {
     }
 
     public int size() {
-        return red.size() + green.size() + blue.size() + orange.size();
+        return red.size() + green.size() + blue.size() + orange.size() + joker.size();
     }
 
     public String toString() {
@@ -70,6 +73,12 @@ public class Hand {
             str.append(tile.toString());
         }
 
+        for (Tile tile: joker) {
+            if (!str.isEmpty())
+                str.append(" ");
+            str.append(tile.toString());
+        }
+
         return str.toString();
     }
 
@@ -78,6 +87,7 @@ public class Hand {
         StringBuilder g = new StringBuilder();
         StringBuilder b = new StringBuilder();
         StringBuilder o = new StringBuilder();
+        StringBuilder j = new StringBuilder();
 
         for (Tile tile: red) {
             if (!r.isEmpty())
@@ -111,7 +121,15 @@ public class Hand {
         if (!o.isEmpty())
             o.append("\n");
 
-        return r.toString() + g + b + o;
+        for (Tile tile: joker) {
+            if (!j.isEmpty())
+                j.append(" ");
+            j.append(tile.toString());
+        }
+        if (!j.isEmpty())
+            j.append("\n");
+
+        return r.toString() + g + b + o +j;
     }
 
     // Adds a tile to the hand
@@ -122,6 +140,7 @@ public class Hand {
             case "G" -> green.add(t);
             case "B" -> blue.add(t);
             case "O" -> orange.add(t);
+            case "Joker" -> joker.add(t);
         }
         sort();
     }
@@ -135,6 +154,7 @@ public class Hand {
                 case "G" -> green.remove(t);
                 case "B" -> blue.remove(t);
                 case "O" -> orange.remove(t);
+                case "Joker" -> joker.remove(t);
             }
         }
     }
@@ -156,6 +176,11 @@ public class Hand {
         for (Tile tile: orange) {
             s += Math.min(tile.number(), 10);
         }
+
+        for (Tile ignored : joker) {
+            s += 30;
+        }
+
         return -s;
     }
 }

@@ -76,5 +76,13 @@ public class BasicStepDefs implements En {
             inString.append("add ").append(meldId).append(" ").append(tiles).append(System.lineSeparator());
             inString.append("end").append(System.lineSeparator());
         });
+
+        Then("^Player (\\d+) wins the game$", (Integer arg0) -> assertEquals(arg0 - 1, game.getWinner()));
+
+        Then("^Player 1 has (-?\\d+) points, player 2 has (-?\\d+) points, player 3 has (-?\\d+) points$", (Integer arg0, Integer arg1, Integer arg2) -> {
+            assertEquals(arg0, game.getScores(0));
+            assertEquals(arg1, game.getScores(1));
+            assertEquals(arg2, game.getScores(2));
+        });
     }
 }

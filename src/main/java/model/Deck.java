@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Deck {
-    private ArrayList<String> deck = new ArrayList<>();
+    private final ArrayList<String> deck = new ArrayList<>();
 
     public Deck() {
         // deck is a list of tiles in string
@@ -15,6 +15,8 @@ public class Deck {
                 deck.add(color+i);
             }
         }
+        deck.add("Joker");
+        deck.add("Joker");
 
         // Randomize the deck
         Collections.shuffle(deck);

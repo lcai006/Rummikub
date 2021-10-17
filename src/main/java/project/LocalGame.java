@@ -192,4 +192,12 @@ public class LocalGame {
 
         return true;
     }
+
+    public int getWinner() {
+        return game.getWinner();
+    }
+
+    public int getScores(int i) {
+        return game.getScores(i);
+    }
 }

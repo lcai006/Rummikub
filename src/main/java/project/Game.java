@@ -13,6 +13,7 @@ public class Game {
     private ArrayList<Boolean> isInitPlay;
     private ArrayList<String> tempTiles;
     private String err;
+    private ArrayList<Integer> scores;
 
     public Game() {
         reset("", "", "");
@@ -26,6 +27,7 @@ public class Game {
         deck = new Deck();
         table = new Table();
         hands = new ArrayList<>();
+        scores = new ArrayList<>();
         Hand h = new Hand(listToString(deck.createHand(hand1)));
         hands.add(h);
         h = new Hand(listToString(deck.createHand(hand2)));
@@ -69,6 +71,9 @@ public class Game {
     }
 
     public String winInfo() {
+        scores.add(hands.get(0).score());
+        scores.add(hands.get(1).score());
+        scores.add(hands.get(2).score());
 
         return "Winner: Player " + (winner + 1) + "\n" +
                 "Scores\n" +
@@ -263,6 +268,10 @@ public class Game {
     public Table getTable() {
         return table;
     }
+
+    public int getWinner() { return winner; }
+
+    public int getScores(int i) { return scores.get(i);}
 
     public void penalty() {
         err = "Invalid Move, Player " + (currentPlayer+1) + " draws 3 tiles";
