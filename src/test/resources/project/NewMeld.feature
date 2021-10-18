@@ -10,6 +10,8 @@ Feature: Test features for players' basic play with playing new melds.
     Examples:
       | tiles             | melds             | number | list                       |
       | R10 G10 B10       | R10 G10 B10       | 11     | {*R10 *G10 *B10}           |
+      | R10 G10 B10 O10   | R10 G10 B10 O10   | 10     | {*R10 *G10 *B10 *O10}      |
+      | R10 R11 R12       | R10 R11 R12       | 11     | {*R10 *R11 *R12}           |
       | R10 R11 R12 R13   | R10 R11 R12 R13   | 10     | {*R10 *R11 *R12 *R13}      |
       | R5 G5 B5 O7 O8 O9 | R5 G5 B5,O7 O8 O9 | 8      | {*R5 *G5 *B5},{*O7 *O8 *O9}|
 

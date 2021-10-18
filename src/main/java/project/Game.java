@@ -131,6 +131,9 @@ public class Game {
                     } else {
                         tiles = line.substring(9);
                     }
+
+                    Meld m = table.getMeld(num - 1);
+
                 }
             }
         }
@@ -289,6 +292,17 @@ public class Game {
         Hand h = hands.get(currentPlayer);
         for (String tile: tiles.split("\\s+")) {
             if (!h.toString().contains(tile)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Check if tiles are in hand
+    public boolean notInMeld(String tiles, Meld m) {
+        for (String tile: tiles.split("\\s+")) {
+            if (!m.toString().contains(tile)) {
                 return true;
             }
         }
