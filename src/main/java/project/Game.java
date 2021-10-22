@@ -8,6 +8,8 @@ public class Game {
     private int currentPlayer;
     private Deck deck;
     private Table table;
+    private Table tempTable;
+    private Hand tempHand;
     private ArrayList<Hand> hands;
     private int winner;
     private ArrayList<Boolean> isInitPlay;
@@ -84,61 +86,24 @@ public class Game {
         err = "";
         table.removeHighlight();
         String[] lines = act.split("\n");
+        tempTable = table.clone();
+        tempHand = new Hand(hands.get(currentPlayer).toString());
 
         if (isInitPlay.get(currentPlayer)) {
             if (lines[0].length() > 4) {
                 if (!checkInit(lines)) {
                     penalty();
                     err = "Need 30 points for initial play";
-                    nextPlayer();
                     return;
                 }
                 isInitPlay.set(currentPlayer, false);
             }
         }
 
-        for (String line: lines) {
-            String[] str = line.split("\\s+", 3);
-            switch (str[0]) {
-                case "new" -> {
-                    String tiles = line.substring(4);
-                    if (notInHand(tiles) || !checkMeld(tiles)) {
-                        penalty();
-                        nextPlayer();
-                        return;
-                    }
-                }
-                case "add" -> {
-                    int num = Integer.parseInt(str[1]);
-                    String tiles;
-                    if (Integer.parseInt(str[1]) < 10) {
-                        tiles = line.substring(6);
-                    } else {
-                        tiles = line.substring(7);
-                    }
-                    Meld m = table.getMeld(num - 1);
-                    if (notInHand(tiles) || m.invalid(tiles)) {
-                        penalty();
-                        nextPlayer();
-                        return;
-                    }
-                }
-                case "reuse" -> {
-                    int num = Integer.parseInt(str[1]);
-                    String tiles;
-                    if (Integer.parseInt(str[1]) < 10) {
-                        tiles = line.substring(8);
-                    } else {
-                        tiles = line.substring(9);
-                    }
-
-                    Meld m = table.getMeld(num - 1);
-
-                }
-            }
-        }
+        int i = 0;
 
         for (String line: lines) {
+            i++;
             if (line.equals("draw")) {
                 draw();
             } else {
@@ -146,6 +111,10 @@ public class Game {
                 switch (str[0]) {
                     case "new" -> {
                         String tiles = line.substring(4);
+                        if (notAvailable(tiles) || !checkMeld(tiles)) {
+                            penalty();
+                            return;
+                        }
                         newMeld(tiles);
                     }
                     case "add" -> {
@@ -156,9 +125,21 @@ public class Game {
                         } else {
                             tiles = line.substring(7);
                         }
+                        Meld m = table.getMeld(num - 1);
+                        if (notAvailable(tiles) || m.invalid(tiles) || (notInHand(tiles) && tiles.contains("Joker"))) {
+                            penalty();
+                            return;
+                        }
                         addToMeld(num - 1, tiles);
                     }
                     case "reuse" -> {
+                        Tile target = null;
+                        if (line.contains("Joker")) {
+                            if(!line.contains("with ")) {
+                                penalty();
+                                return;
+                            }
+                        }
                         int num = Integer.parseInt(str[1]);
                         String tiles;
                         if (Integer.parseInt(str[1]) < 10) {
@@ -166,14 +147,52 @@ public class Game {
                         } else {
                             tiles = line.substring(9);
                         }
+                        Meld m = table.getMeld(num - 1);
+                        if (notInMeld(tiles, m)) {
+                            penalty();
+                            return;
+                        }
+                        if (line.contains("Joker")) {
+                            if (!line.contains("with ")) {
+                                penalty();
+                                return;
+                            }
+                            target = new Tile(line.split("with ")[1]);
+                            Tile t = tempTable.getMeld(num - 1).getJoker();
+                            if (t != null) {
+                                if (!t.color().contains(target.color()) || t.number() != target.number() || notInHand(line.split("with ")[1])) {
+                                    penalty();
+                                    return;
+                                }
+                            }
+
+                            tiles = tiles.split("with ")[0];
+                        } else if (m.toString().contains("Joker")) {
+                            penalty();
+                            return;
+                        }
 
                         reuseTiles(num - 1, tiles);
+                        if (target != null)
+                            addToMeld(num - 1, target.toString());
                     }
                 }
             }
+
+            if (i == lines.length && !tempTiles.isEmpty()) {
+                penalty();
+                return;
+            }
         }
 
-        table.checkMelds();
+        // contains invalid melds
+        if (!tempTable.checkMelds()) {
+            penalty();
+            return;
+        }
+
+        table = tempTable.clone();
+        hands.set(currentPlayer, tempHand);
 
         if (hands.get(currentPlayer).size() == 0) {
             winner = currentPlayer;
@@ -186,39 +205,42 @@ public class Game {
     public void draw() {
         String tile = deck.draw();
         hands.get(currentPlayer).add(tile);
+        tempHand.add(tile);
     }
 
     // current player plays a new meld
     public void newMeld(String tiles) {
-        table.createMeld(tiles);
-        table.newHighLight(table.size() - 1);
+        tempTable.createMeld(tiles);
+        tempTable.newHighLight(tempTable.size() - 1);
         Hand h = new Hand(tiles);
         for (String t: tiles.split("\\s+")) {
             if (tempTiles.contains(t)) {
                 tempTiles.remove(t);
-                table.moveHighLight(table.size() - 1, t);
+                tempTable.moveHighLight(tempTable.size() - 1, t);
                 h.play(t);
             }
         }
         if (!h.toString().isEmpty()) {
-            hands.get(currentPlayer).play(h.toString());
+            tempHand.play(h.toString());
         }
     }
 
     // current player add tiles to a meld
     public void addToMeld(int i, String tiles) {
-        table.addTile(i, tiles);
-        table.newHighLight(i, tiles);
+        tempTable.addTile(i, tiles);
+        tempTable.newHighLight(i, tiles);
         Hand h = new Hand(tiles);
         for (String t: tiles.split("\\s+")) {
+            if (t.contains("Joker"))
+                t = "Joker";
             if (tempTiles.contains(t)) {
                 tempTiles.remove(t);
-                table.moveHighLight(i, t);
+                tempTable.moveHighLight(i, t);
                 h.play(t);
             }
         }
         if (!h.toString().isEmpty()) {
-            hands.get(currentPlayer).play(h.toString());
+            tempHand.play(h.toString());
         }
     }
 
@@ -250,9 +272,9 @@ public class Game {
     }
 
     public void reuseTiles(int i, String tiles) {
-        for (String t: tiles.split(" ")) {
+        for (String t: tiles.split("\\s+")) {
             tempTiles.add(t);
-            table.removeTile(i, t);
+            tempTable.removeTile(i, t);
         }
     }
 
@@ -281,17 +303,20 @@ public class Game {
         for (int i = 0; i < 3; i++) {
             draw();
         }
+        nextPlayer();
     }
 
     public String getError() {
         return err;
     }
 
-    // Check if tiles are in hand
-    public boolean notInHand(String tiles) {
-        Hand h = hands.get(currentPlayer);
+    // Check if tiles are in hand or reused
+    public boolean notAvailable(String tiles) {
         for (String tile: tiles.split("\\s+")) {
-            if (!h.toString().contains(tile)) {
+            if (tile.contains("Joker")) {
+                tile = "Joker";
+            }
+            if (!tempHand.toString().contains(tile) && !tempTiles.contains(tile)) {
                 return true;
             }
         }
@@ -300,7 +325,23 @@ public class Game {
     }
 
     // Check if tiles are in hand
+    public boolean notInHand(String tiles) {
+        for (String tile: tiles.split("\\s+")) {
+            if (tile.contains("Joker"))
+                tile = "Joker";
+            if (!tempHand.toString().contains(tile))
+                return true;
+        }
+
+        return false;
+    }
+
+    // Check if tiles are in hand
     public boolean notInMeld(String tiles, Meld m) {
+        if (tiles.contains("Joker") && m.toString().contains("Joker")) {
+            return false;
+        }
+
         for (String tile: tiles.split("\\s+")) {
             if (!m.toString().contains(tile)) {
                 return true;
@@ -310,7 +351,6 @@ public class Game {
         return false;
     }
 
-    // Check if tiles are in hand
     public boolean checkMeld(String tiles) {
         Meld m = new Meld(tiles);
         return !m.invalid("");

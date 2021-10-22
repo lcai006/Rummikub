@@ -21,18 +21,20 @@ public class BasicStepDefs implements En {
 
         Given("^Players start the game$", () -> game.reset(tile1, tile2, tile3));
 
-        When("^Player (\\d+) draws a tile$", (Integer arg0) ->
-            inString.append("draw").append(System.lineSeparator()));
+        When("^Player (\\d+) draws a tile( as a try)?$", (Integer arg0, String trigger) -> {
+            inString.append("draw").append(System.lineSeparator());
+            if (trigger != null) {
+                game.setInput(inString.toString());
+                inString.setLength(0);
+                game.start();
+            }
+         });
 
-        When("^Player (\\d+) enters wrong action$", (Integer arg0) ->
-            inString.append("end").append(System.lineSeparator()));
-
-        Then("^Game shows result$", () -> {
+        When("^Player (\\d+) enters wrong action$", (Integer arg0) ->{
+            inString.append("end").append(System.lineSeparator());
             game.setInput(inString.toString());
-            System.out.println(inString);
             inString.setLength(0);
             game.start();
-            output = game.getOutput();
         });
 
         Then("^Player (\\d+) has (\\d+) tiles$", (Integer arg0, Integer arg1) ->
@@ -55,11 +57,16 @@ public class BasicStepDefs implements En {
             }
         });
 
-        When("^Player (\\d+) plays (.+)$", (Integer arg0, String melds) -> {
+        When("^Player (\\d+) plays (.+) melds( as a try)?$", (Integer arg0, String melds, String trigger) -> {
             for(String meld: melds.split(",")) {
                 inString.append("new ").append(meld).append(System.lineSeparator());
             }
             inString.append("end").append(System.lineSeparator());
+            if (trigger != null) {
+                game.setInput(inString.toString());
+                inString.setLength(0);
+                game.start();
+            }
         });
 
         Then("^Table has melds (.+)$", (String melds) -> {
@@ -72,9 +79,14 @@ public class BasicStepDefs implements En {
 
         Then("^Player (\\d+) receives an penalty for invalid initial play$", (Integer arg0) -> assertEquals("Need 30 points for initial play", game.error()));
 
-        When("^Player (\\d+) adds (.+) to meld (\\d+)$", (Integer arg0, String tiles, Integer meldId) -> {
+        When("^Player (\\d+) adds (.+) to meld (\\d+)( as a try)?$", (Integer arg0, String tiles, Integer meldId, String trigger) -> {
             inString.append("add ").append(meldId).append(" ").append(tiles).append(System.lineSeparator());
             inString.append("end").append(System.lineSeparator());
+            if (trigger != null) {
+                game.setInput(inString.toString());
+                inString.setLength(0);
+                game.start();
+            }
         });
 
         Then("^Player (\\d+) wins the game$", (Integer arg0) -> assertEquals(arg0 - 1, game.getWinner()));
@@ -84,5 +96,28 @@ public class BasicStepDefs implements En {
             assertEquals(arg1, game.getScores(1));
             assertEquals(arg2, game.getScores(2));
         });
+
+        And("^Player (\\d+) reuses (.+) from meld (\\d+)$", (Integer arg0, String tiles1, Integer meldId) -> inString.append("reuse ").append(meldId).append(" ").append(tiles1).append(System.lineSeparator()));
+        
+        When("^Player (\\d+) reuses (.+) from meld (\\d+) to play (.+)$", (Integer arg0, String tiles1, Integer meldId, String tiles2) -> {
+            inString.append("reuse ").append(meldId).append(" ").append(tiles1).append(System.lineSeparator());
+            inString.append("new ").append(tiles2).append(System.lineSeparator());
+            inString.append("end").append(System.lineSeparator());
+
+            game.setInput(inString.toString());
+            inString.setLength(0);
+            game.start();
+        });
+
+        When("^Player (\\d+) reuses (.+) from meld (\\d+) to add (.+) to meld (\\d+)$", (Integer arg0, String tiles1, Integer meldId1, String tiles2, Integer meldId2) -> {
+            inString.append("reuse ").append(meldId1).append(" ").append(tiles1).append(System.lineSeparator());
+            inString.append("add ").append(meldId2).append(" ").append(tiles2).append(System.lineSeparator());
+            inString.append("end").append(System.lineSeparator());
+
+            game.setInput(inString.toString());
+            inString.setLength(0);
+            game.start();
+        });
+
     }
 }

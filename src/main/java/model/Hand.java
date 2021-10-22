@@ -20,6 +20,8 @@ public class Hand {
         // create tiles from the string
         String[] tiles = str.split("\\s+");
         for (String tile: tiles) {
+            if (tile.contains("Joker"))
+                tile = "Joker";
             Tile t = new Tile(tile);
             switch (t.color()) {
                 case "R" -> red.add(t);

@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Meld {
     private String type;
-    private ArrayList<Tile> meld;
+    private final ArrayList<Tile> meld;
 
     public Meld(String str) {
         meld = new ArrayList<>();
@@ -21,7 +21,14 @@ public class Meld {
 
             int num = 0;
             String color = "";
+            int n = 0;
+            int j = -1;
             for (Tile t: meld) {
+                if (t.color().equals("Joker")) {
+                    j = n;
+                    continue;
+                }
+                n++;
                 if (num == 0) {
                     num = t.number();
                     color = t.color();
@@ -36,9 +43,52 @@ public class Meld {
                     type = "invalid";
                 }
             }
+            if (j != -1) {
+                if (type.equals("run")) {
+                    int number;
+                    String c;
+                    if (j == 0) {
+                        number = meld.get(j + 1).number();
+                        c = meld.get(j + 1).color();
+                        if (number == 1)
+                            number = 13;
+                        else
+                            number = number - 1;
+
+                    } else {
+                        number = meld.get(j - 1).number();
+                        c = meld.get(j - 1).color();
+                        if (number == 13)
+                            number = 1;
+                        else
+                            number = number + 1;
+
+                    }
+                    meld.get(j).setNumber(number);
+                    meld.get(j).setColor(c);
+                } else if (type.equals("set")) {
+                    String c = "RGBO";
+                    for (int i = 0; i < meld.size(); i++) {
+                        if (i != j) {
+                            c = c.replace(meld.get(i).color(), "");
+                        }
+                    }
+                    if (j == 0) {
+                        meld.get(j).setNumber(meld.get(j + 1).number());
+                    } else {
+                        meld.get(j).setNumber(meld.get(j - 1).number());
+                    }
+                    meld.get(j).setColor(c);
+                }
+            }
 
             sort();
         }
+    }
+
+    public Meld(Meld m) {
+        this.type = m.type;
+        this.meld = (ArrayList<Tile>) m.meld.clone();
     }
 
     public int size() {
@@ -72,7 +122,25 @@ public class Meld {
         String[] tiles = list.split("\\s+");
 
         for (String tile: tiles) {
-            Tile t = new Tile(tile);
+            Tile t;
+            if (tile.contains("Joker")) {
+                t = new Tile("Joker");
+                if (type.equals("run")) {
+                    tile = tile.replace("Joker=", "");
+                    Tile t1 = new Tile(tile);
+                    t.setColor(t1.color());
+                    t.setNumber(t1.number());
+                } else if (type.equals("set")) {
+                    String color = "RGBO";
+                    for (Tile setMember: meld) {
+                        color = color.replace(setMember.color(), "");
+                        t.setNumber(setMember.number());
+                    }
+                    t.setColor(color);
+                }
+            } else {
+                t = new Tile(tile);
+            }
             meld.add(t);
         }
 
@@ -115,20 +183,29 @@ public class Meld {
                     if (tiles.length + meld.size() > 4)
                         return true;
                 } else {
-                    if (meld.size() > 4)
+                    if (meld.size() < 3 || meld.size() > 4)
                         return true;
                 }
-                ArrayList<String> colorList = new ArrayList<>();
+                if (meld.size() == 3 && list.equals("Joker"))
+                    return false;
+
+                String colorList = "RGBO";
                 int num = 0;
                 for (Tile t : meld) {
-                    if (colorList.contains(t.color()))
+                    if (!colorList.contains(t.color()))
                         return true;
                     if (num == 0)
                         num = t.number();
                     else if (num != t.number())
                         return true;
 
-                    colorList.add(t.color());
+                    if (t.color().length() > 1) {
+                        for (int i = 0; i < t.color().length(); i++) {
+                            colorList = colorList.replace(String.valueOf(t.color().charAt(i)), "");
+                        }
+                    } else {
+                        colorList = colorList.replace(t.color(), "");
+                    }
                 }
 
                 if (!list.isEmpty()) {
@@ -137,7 +214,7 @@ public class Meld {
                         if (t.number() != meld.get(0).number()) {
                             return true;
                         }
-                        if (colorList.contains(t.color())) {
+                        if (!colorList.contains(t.color())) {
                             return true;
                         }
                     }
@@ -145,8 +222,12 @@ public class Meld {
                 break;
             case "run":
                 // size of a run is between 3 and 13
-                if (tiles.length + meld.size() > 13) {
-                    return true;
+                if (!list.isEmpty()) {
+                    if (tiles.length + meld.size() > 13)
+                        return true;
+                } else {
+                    if (meld.size() < 3 || meld.size() > 13)
+                        return true;
                 }
 
                 ArrayList<Integer> numList = new ArrayList<>();
@@ -156,6 +237,8 @@ public class Meld {
 
                 if (!list.isEmpty()) {
                     for (String tile : tiles) {
+                        if (tile.contains("Joker"))
+                            tile = tile.replace("Joker=", "");
                         Tile t = new Tile(tile);
                         if (!t.color().equals(meld.get(0).color())) {
                             return true;
@@ -166,6 +249,7 @@ public class Meld {
 
                 // Checks if the sequence is valid
                 numList.sort(null);
+
                 int current = 0;
                 if (numList.contains(1) && numList.contains(13) && numList.size() < 13) {
                     for (int i = 0; i < numList.size(); i++) {
@@ -216,13 +300,16 @@ public class Meld {
         for (Tile t: meld) {
             if (list.contains(t.value())) {
                 t.newHighlight();
+            } else if(tiles.contains("Joker") && t.value().equals("Joker")) {
+                t.newHighlight();
             }
         }
     }
 
     public void moveHighLight(String tiles) {
+        ArrayList<String> list = new ArrayList<>(List.of(tiles.split(" ")));
         for (Tile t: meld) {
-            if (tiles.contains(t.value())) {
+            if (list.contains(t.value())) {
                 t.moveHighlight();
             }
         }
@@ -255,5 +342,16 @@ public class Meld {
             s += Math.min(t.number(), 10);
         }
         return s;
+    }
+
+    public Tile getJoker() {
+        if (toString().contains("Joker")) {
+            for (Tile t: meld) {
+                if (t.value().equals("Joker")) {
+                    return t;
+                }
+            }
+        }
+        return null;
     }
 }

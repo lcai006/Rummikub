@@ -163,7 +163,7 @@ public class LocalGame {
                 }
 
                 if (action.split("\\s+").length >= 3) {
-                    return checkTiles(tiles);
+                    return checkTiles(tiles.replace("with ", ""));
                 } else {
                     return false;
                 }
@@ -185,6 +185,12 @@ public class LocalGame {
         list.add("Joker");
 
         for (String tile: tiles.split("\\s+")) {
+            if (tile.contains("Joker=")) {
+                if (!list.contains(tile.split("=")[1])) {
+                    return false;
+                }
+                continue;
+            }
             if (!list.contains(tile)) {
                 return false;
             }

@@ -2,7 +2,7 @@ package model;
 
 public class Tile {
     private final String str;
-    private final String color;
+    private String color;
     private int color_num;
     private int number;
     private boolean newHighlighted = false;
@@ -36,6 +36,21 @@ public class Tile {
 
     public int number() {
         return this.number;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+        switch (color) {
+            case "R" -> color_num = 0;
+            case "G" -> color_num = 1;
+            case "B" -> color_num = 2;
+            case "O" -> color_num = 3;
+            default -> color_num = 4;
+        }
+    }
+
+    public void setNumber(int num) {
+        this.number = num;
     }
 
     public int colorNum() {

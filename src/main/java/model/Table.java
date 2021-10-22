@@ -2,8 +2,8 @@ package model;
 
 import java.util.ArrayList;
 
-public class Table {
-    private final ArrayList<Meld> melds;
+public class Table implements Cloneable{
+    private ArrayList<Meld> melds;
     public Table() {
         melds = new ArrayList<>();
     }
@@ -62,7 +62,7 @@ public class Table {
         return melds.size();
     }
 
-    public void checkMelds() {
+    public boolean checkMelds() {
         for (Meld m: new ArrayList<>(melds)) {
             if (m.size() == 0) {
                 melds.remove(m);
@@ -106,6 +106,26 @@ public class Table {
                     }
                 }
             }
+        }
+
+        for (Meld m: melds) {
+            if (m.invalid(""))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Table clone() {
+        try {
+            Table clone = (Table) super.clone();
+            clone.melds = new ArrayList<>();
+            for (Meld m: melds) {
+                clone.melds.add(new Meld(m));
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
         }
     }
 }
