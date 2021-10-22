@@ -20,7 +20,7 @@ Feature: Test features for playing with joker
     Then Player 1 receives an penalty for invalid initial play
     And Player 1 has 17 tiles
 
-  Scenario: Player 1 plays initial melds containing joker with less than 30 points
+  Scenario: Player 1 plays initial melds containing joker as Ace with less than 30 points
     Given Player 1 has tiles: R12 R13 Joker
     And Players start the game
     When Player 1 plays R12 R13 Joker melds as a try
