@@ -9,14 +9,21 @@ Feature: Test features for playing with joker
       | tiles                | melds                | number | list                       |
       | Joker G10 B10        | Joker G10 B10        | 11     | {*G10 *B10 *Joker}         |
       | R8 G8 B8 Joker       | R8 G8 B8 Joker       | 10     | {*R8 *G8 *B8 *Joker}       |
-      | Joker R11 R12        | Joker R11 R12        | 11     | {*Joker *R11 *R12}         |
+      | Joker R12 R13        | Joker R12 R13        | 11     | {*Joker *R12 *R13}         |
       | R9 Joker R11 R12     | R9 Joker R11 R12     | 10     | {*R9 *Joker *R11 *R12}     |
       | R11 R12 R13 Joker R2 | R11 R12 R13 Joker R2 | 9      | {*R11 *R12 *R13 *Joker *R2}|
 
   Scenario: Player 1 plays initial melds containing joker with less than 30 points
-    Given Player 1 has tiles: R8 R9 Joker
+    Given Player 1 has tiles: R7 R8 Joker
     And Players start the game
-    When Player 1 plays R8 R9 Joker melds as a try
+    When Player 1 plays R7 R8 Joker melds as a try
+    Then Player 1 receives an penalty for invalid initial play
+    And Player 1 has 17 tiles
+
+  Scenario: Player 1 plays initial melds containing joker with less than 30 points
+    Given Player 1 has tiles: R12 R13 Joker
+    And Players start the game
+    When Player 1 plays R12 R13 Joker melds as a try
     Then Player 1 receives an penalty for invalid initial play
     And Player 1 has 17 tiles
 
