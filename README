@@ -1,4 +1,3 @@
-It is possible that the testing program stucks by race condition, Please rerun the test suite if it happens.
 Instruction to play
 Draw a tile: 
 draw
